@@ -12,7 +12,7 @@ Gem::Specification.new do |spec|
   spec.email         = ['kris.dekeyser@libis.be']
   spec.summary       = %q{LIBIS Services toolbox.}
   spec.description   = %q{Set of classes that simplify connection to different LIBIS services.}
-  spec.homepage      = ''
+  spec.homepage      = 'https://github.com/Kris-LIBIS/LIBIS_Services'
   spec.license       = 'MIT'
 
   spec.files         = `git ls-files -z`.split("\x0")

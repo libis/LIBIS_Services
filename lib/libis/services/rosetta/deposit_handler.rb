@@ -154,11 +154,16 @@ module LIBIS
 
         protected
 
-        def parse_deposit_info(response)
-          if response.is_a? String
-            xml_response = LIBIS::Tools::XmlDocument.parse(response).to_hash(strip_namespaces: true).values.first
-            response = xml_response unless xml_response.nil?
+        def result_parser(response)
+          result = super(response)
+          if result.is_a? String
+            xml_result = LIBIS::Tools::XmlDocument.parse(result).to_hash(strip_namespaces: true).values.first rescue nil
+            result = xml_result unless xml_result.nil?
           end
+          result
+        end
+
+        def parse_deposit_info(response)
           list = response['records']['record'] rescue []
           list = [list] unless list.is_a? Array
           list.map do |record|

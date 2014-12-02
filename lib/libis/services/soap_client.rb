@@ -32,11 +32,13 @@ module LIBIS
             end
           end
 
-          result = block_given? ? yield(response) : parse_result(response)
-          return result
+          return yield(response) if block_given?
+          parse_result(response)
+
         rescue Exception => ex
           return {error: ex}
         end
+
       end
 
       protected
@@ -46,17 +48,18 @@ module LIBIS
           error = []
           error << "SOAP Error: #{response.soap_fault.to_s}" if response.soap_fault?
           error << "HTTP Error: #{response.http_error.to_s}" if response.http_error?
-          return {error: error}
+          raise RuntimeError error.join('\n')
         end
-        result_parser(response)
+        result = result_parser(response.body)
+        raise RuntimeError, result[:error] if (result.is_a?(Hash) && result[:error])
+        result
       end
 
       def result_parser(response)
-        response.body
+        response
       end
 
     end
-
 
   end
 end

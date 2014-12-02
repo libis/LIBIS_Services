@@ -20,8 +20,23 @@ module LIBIS
         parse_result response, &block
       end
 
-      def post(path, params = {}, headers = {}, &block)
+      def post_url(path, params = {}, headers = {}, &block)
         response = client[path].post({params: params}.merge headers, &block)
+        parse_result response, &block
+      end
+
+      def post_data(path, payload, headers = {}, &block)
+        response = client[path].post(payload, headers, &block)
+        parse_result response, &block
+      end
+
+      def put_url(path, params = {}, headers = {}, &block)
+        response = client[path].put({params: params}.merge headers, &block)
+        parse_result response, &block
+      end
+
+      def put_data(path, payload, headers = {}, &block)
+        response = client[path].put(payload, headers, &block)
         parse_result response, &block
       end
 

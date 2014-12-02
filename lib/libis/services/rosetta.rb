@@ -54,27 +54,28 @@ module LIBIS
           ies = @sip_service.get_ies(deposit[:sip])
           ies_info = ies.map do |ie|
             title = nil
-            dir = nil
+            id = nil
             begin
-              md = @ie_service.get_metadata(ie).to_hash
-              dc = md['mets:mets']['mets:dmdSec']['mets:mdWrap']['mets:xmlData']['dc:record']
-              title = dc['dc:title'].to_s
-              dir = dc['dc:identifier'].split('\\').last.to_s
+              md = @ie_service.get_metadata(ie).to_hash['mets:mets']
+              dc = md['mets:dmdSec']['mets:mdWrap']['mets:xmlData']['dc:record']
+              title = dc['dc:title']
+              id = dc['dc:identifier']
             rescue
               # ignore
             end
             # retrieve ie mets file
-            xml_doc = @ie_service.get_mets(ie)
-            ie_info = LIBIS::Tools::MetsFile.parse(xml_doc.to_xml)
+            ie_info = @ie_service.get_mets(ie)
             {
                 ie: ie,
                 title: title,
-                dir: dir,
+                id: id,
                 content: ie_info
             }.cleanup
           end
           deposit[:ies] = ies_info
         end
+        deposits.sort! { |x, y| x[:ies][0][:id] <=> y[:ies][0][:id] }
+        deposits.each { |dep| dep[:ies].each { |ie| puts "DEP ##{dep[:deposit]} - SIP ##{dep[:sip]} - IE ##{ie[:ie]} - #{ie[:id]} - #{ie[:title]}" } }
         deposits
       end
 
@@ -91,17 +92,18 @@ module LIBIS
 
         # First Sheet is an overview of all dossiers
         overview = workbook.add_worksheet('overzicht dossiers')
-        ie_data_keys = Set.new %w[folder dossier link disposition]
+        ie_data_keys = Set.new %w[id dossier link disposition]
         ie_list = [] # ie info will be collected in this array to be printed later
 
         # iterate over all deposits
         deposits.each do |deposit|
           # iterate over all IEs
-          deposit[:ies].sort { |x, y| x[0][:dir] <=> y[0][:dir] }.each do |ie|
+          deposit[:ies].sort { |x, y| x[:id] <=> y[:id] }.each do |ie|
             @ie = ie
+            id = (ie[:id] || ie[:ie])
             # noinspection RubyStringKeysInHashInspection
             ie_data = {
-                'folder' => "#{ie[:dir]}",
+                'id' => "#{id}",
                 'dossier' => ie[:title],
                 'disposition' => (ie[:content][:dmd]['date'] rescue nil),
                 'link' => "http://depot.lias.be/delivery/DeliveryManagerServlet?dps_pid=#{ie[:ie]}",
@@ -113,7 +115,7 @@ module LIBIS
             ].each do |data|
               ie_data.merge! data if data
             end
-            dossier_sheet = workbook.add_worksheet(ie[:dir])
+            dossier_sheet = workbook.add_worksheet(id.gsub(/[\\\/*?]+/,'.'))
             dossier_row = 0
 
             ie[:content].each do |rep_name, rep|

@@ -11,7 +11,7 @@ module LIBIS
 
         # @param [String] base_url
         def initialize(base_url = 'https://pds.libis.be')
-          configure "#{base_url}/pds"
+          configure base_url
         end
 
         # @param [String] user
@@ -27,7 +27,7 @@ module LIBIS
               bor_verification: password,
               institute: institute
           }
-          response = client.put params
+          response = get 'pds', params
           return nil unless response.code == 200 and response.body.match /pds_handle=(\d+)[^\d]/
           $1
         end

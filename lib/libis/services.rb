@@ -1,17 +1,17 @@
 module LIBIS
   module Services
 
-    autoload :SoapClient, 'libis/tools/webservices/soap_client'
-    autoload :RestClient, 'libis/tools/webservices/rest_client'
+    autoload :SoapClient, 'libis/services/soap_client'
+    autoload :RestClient, 'libis/services/rest_client'
 
     autoload :OracleClient, 'libis/services/oracle_client'
-    autoload :DigitoolConnector, 'lib/libis/tools/webservices/digitool_connector'
-    autoload :DigitalEntityManager, 'libis/tools/webservices/digital_entity_manager'
-    autoload :MetaDataManager, 'libis/tools/webservices/meta_data_manager'
+    autoload :DigitoolConnector, 'libis/services/digitool_connector'
+    autoload :DigitalEntityManager, 'libis/services/digital_entity_manager'
+    autoload :MetaDataManager, 'libis/services/meta_data_manager'
 
-    autoload :SharepointConnector, 'libis/tools/webservices/sharepoint_connector'
+    autoload :SharepointConnector, 'libis/services/sharepoint_connector'
 
-    autoload :Rosetta, 'libis/tools/webservices/rosetta'
+    autoload :Rosetta, 'libis/services/rosetta'
 
   end
 end

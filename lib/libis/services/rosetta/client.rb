@@ -26,8 +26,9 @@ module LIBIS
 
         protected
 
+        # @param [Hash] response
+        # @return [LIBIS::Tools::XmlDocument]
         def result_parser(response)
-          response = super(response)
           result = response.values.first.values.first rescue nil
           return {error: result['message_desc']} if (result.is_a?(Hash) && result['is_error'])
           result

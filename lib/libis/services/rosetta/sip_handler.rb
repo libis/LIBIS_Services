@@ -5,7 +5,7 @@ require_relative 'client'
 
 module LIBIS
   module Services
-    module RosettaServices
+    module RosettaService
 
       class SipHandler < LIBIS::Services::RosettaService::Client
 
@@ -18,8 +18,11 @@ module LIBIS
         end
 
         def get_ies(sip_id)
-          (request :get_sip_i_es, arg0: sip_id).split(',')
+          result = request :get_sip_i_es, arg0: sip_id
+          result.split(',')
         end
+
+        protected
 
       end
 

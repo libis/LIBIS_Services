@@ -6,7 +6,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'libis/services/version'
 
 Gem::Specification.new do |gem|
-  gem.name          = 'LIBIS_Services'
+  gem.name          = 'libis-services'
   gem.version       = Libis::Services::VERSION
   gem.authors       = ['Kris Dekeyser']
   gem.email         = ['kris.dekeyser@libis.be']

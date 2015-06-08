@@ -3,14 +3,14 @@
 require 'libis/tools/extend/hash'
 require_relative 'client'
 
-module LIBIS
+module Libis
   module Services
-    module RosettaService
+    module Rosetta
 
-      class SipHandler < LIBIS::Services::RosettaService::Client
+      class SipHandler < Libis::Services::Rosetta::Client
 
-        def initialize(base_url = 'http://depot.lias.be')
-          super 'repository', 'SipWebServices', base_url
+        def initialize(base_url = 'http://depot.lias.be', options = {})
+          super 'repository', 'SipWebServices', {url: base_url}.merge(options)
         end
 
         def get_info(sip_id)
@@ -23,6 +23,11 @@ module LIBIS
         end
 
         protected
+
+        def result_parser(response, options = {})
+          puts response
+          response
+        end
 
       end
 

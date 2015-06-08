@@ -2,13 +2,13 @@
 
 require 'libis/services/soap_client'
 
-module LIBIS
+module Libis
   module Services
-    module CollectiveAccessService
+    module CollectiveAccess
 
       #noinspection RubyStringKeysInHashInspection
       class Connector
-        include LIBIS::Services::SoapClient
+        include Libis::Services::SoapClient
 
         attr_accessor :type_cast
 

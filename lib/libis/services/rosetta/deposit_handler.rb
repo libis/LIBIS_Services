@@ -4,14 +4,14 @@ require 'libis/tools/extend/hash'
 
 require_relative 'client'
 
-module LIBIS
+module Libis
   module Services
-    module RosettaService
+    module Rosetta
 
-      class DepositHandler < ::LIBIS::Services::RosettaService::Client
+      class DepositHandler < ::Libis::Services::Rosetta::Client
 
-        def initialize(base_url = 'http://depot.lias.be')
-          super 'deposit', 'DepositWebServices', base_url
+        def initialize(base_url = 'http://depot.lias.be', options = {})
+          super 'deposit', 'DepositWebServices', {url: base_url}.merge(options)
         end
 
         # @param [Object] flow_id ID of the material flow used
@@ -19,13 +19,37 @@ module LIBIS
         # @param [Object] producer_id ID of the Producer
         # @param [Object] deposit_set_id ID of the set of deposits
         def submit(flow_id, subdir, producer_id, deposit_set_id = '1')
-          request :submit_deposit_activity, {
-                                              arg0: @pds_handle,
-                                              arg1: flow_id,
-                                              arg2: subdir,
-                                              arg3: producer_id,
-                                              arg4: deposit_set_id
-                                          }.cleanup
+          do_request :submit_deposit_activity,
+                     arg0: @pds_handle,
+                     arg1: flow_id,
+                     arg2: subdir,
+                     arg3: producer_id,
+                     arg4: deposit_set_id
+        end
+
+        def deposits(opts = {})
+          options = opts.dup
+          flow_id = options.delete :flow_id
+          submit_date_from, submit_date_to = options.delete :submit_date
+          submit_date_to ||= submit_date_from if submit_date_from
+          update_date_from, update_date_to = options.delete :update_date
+          update_date_to ||= update_date_from if update_date_from
+          if submit_date_from
+            if flow_id
+              get_by_submit_flow submit_date_from, submit_date_to, flow_id, options
+            else
+              get_by_submit_date submit_date_from, submit_date_to, options
+            end
+          elsif update_date_from
+            if flow_id
+              get_by_update_flow update_date_from, update_date_to, flow_id, options
+            else
+              get_by_update_date update_date_from, update_date_to, options
+            end
+          else
+            error "unsupported deposit query: #{opts}."
+            []
+          end
         end
 
         # @param [String] date_from Start date for lookup range
@@ -54,8 +78,8 @@ module LIBIS
               arg6: options[:start_record],
               arg7: options[:end_record]
           }.cleanup
-          method = :get_deposit_activity_by_submit_date
-          parse_deposit_info(block_given? ? request(method, params, &block) : request(method, params))
+          reply = do_request :get_deposit_activity_by_submit_date, params
+          get_array_from_reply(reply, :submit_date_result)
         end
 
         # @param [String] date_from Start date for lookup range
@@ -86,8 +110,8 @@ module LIBIS
               arg7: options[:start_record],
               arg8: options[:end_record]
           }.cleanup
-          method = :get_deposit_activity_by_submit_date_by_material_flow
-          parse_deposit_info(block_given? ? request(method, params, &block) : request(method, params))
+          reply = do_request :get_deposit_activity_by_submit_date_by_material_flow, params
+          get_array_from_reply(reply, :submit_date_result_by_mf)
         end
 
         # @param [String] date_from Start date for lookup range
@@ -116,8 +140,8 @@ module LIBIS
               arg6: options[:start_record],
               arg7: options[:end_record]
           }.cleanup
-          method = :get_deposit_activity_by_update_date
-          parse_deposit_info(block_given? ? request(method, params, &block) : request(method, params))
+          reply = do_request :get_deposit_activity_by_update_date, params
+          get_array_from_reply(reply, :submit_date_result)
         end
 
         # @param [String] date_from Start date for lookup range
@@ -148,34 +172,20 @@ module LIBIS
               arg7: options[:start_record],
               arg8: options[:end_record]
           }.cleanup
-          method = :get_deposit_activity_by_update_date_by_material_flow
-          parse_deposit_info(block_given? ? request(method, params, &block) : request(method, params))
+          reply = do_request :get_deposit_activity_by_update_date_by_material_flow, params
+          get_array_from_reply(reply, :submit_flow_result)
         end
 
         protected
 
-        def result_parser(response)
-          result = super(response)
-          if result.is_a? String
-            xml_result = LIBIS::Tools::XmlDocument.parse(result).to_hash(strip_namespaces: true).values.first rescue nil
-            result = xml_result unless xml_result.nil?
-          end
-          result
+        def get_array_from_reply(reply, tag)
+          data = parse_xml_data(reply[tag], :deposit_activity_list)
+          parse_deposit_info(data)
         end
 
         def parse_deposit_info(response)
-          list = response['records']['record'] rescue []
-          list = [list] unless list.is_a? Array
-          list.map do |record|
-            {
-                title: record['title'],
-                sip: record['sip_id'],
-                deposit: record['deposit_activity_id'],
-                status: record['status'],
-                reason: record['sip_reason'],
-                date: [record['creation_date'], record['submit_date'], record['update_date']],
-            }.cleanup
-          end
+          list = response[:records][:record] rescue []
+          list.is_a?(Array) ? list : [list]
         end
 
       end

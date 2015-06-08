@@ -1,4 +1,4 @@
-module LIBIS
+module Libis
   module Services
 
     class OracleClient

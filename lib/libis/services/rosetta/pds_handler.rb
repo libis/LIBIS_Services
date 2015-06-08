@@ -2,12 +2,12 @@
 
 require 'libis/services/rest_client'
 
-module LIBIS
+module Libis
   module Services
-    module RosettaService
+    module Rosetta
 
       class PdsHandler
-        include LIBIS::Services::RestClient
+        include Libis::Services::RestClient
 
         # @param [String] base_url
         def initialize(base_url = 'https://pds.libis.be')
@@ -20,9 +20,7 @@ module LIBIS
         # @return [String] PDS handle, nil if could not login
         def login(user, password, institute)
           params = {
-              func: 'login',
-              calling_system: 'dps',
-              login: 'Login',
+              func: 'login-url',
               bor_id: user,
               bor_verification: password,
               institute: institute
@@ -37,10 +35,23 @@ module LIBIS
         def logout(pds_handle)
           params = {
               func: 'logout',
-              cookies: {PDS_HANDLE: pds_handle}
+              pds_handle: pds_handle
           }
-          response = client.get params
+          response = get 'pds', params
           response.code == 200
+        end
+
+        # @param [String] pds_handle
+        # @return [Hash] with user information. At least containing: 'id', 'name', 'institute' and 'group'
+        def user_info(pds_handle)
+          params = {
+              func: 'get-attribute',
+              attribute: 'BOR_INFO',
+              pds_handle: pds_handle
+          }
+          response = get 'pds', params
+          return nil unless response.code == 200
+          Nori.new(convert_tags_to: lambda {|tag| tag.to_sym}).parse(response.body)
         end
       end
 

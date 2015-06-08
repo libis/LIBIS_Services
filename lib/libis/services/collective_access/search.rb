@@ -1,20 +1,22 @@
 # coding: utf-8
 
+require 'libis/services/generic_search'
+
 require_relative 'connector'
 
-module LIBIS
+module Libis
   module Services
-    module CollectiveAccessService
+    module CollectiveAccess
 
       class Search < Connector
+        include ::Libis::Services::GenericSearch
 
         def initialize(host = nil)
           super 'Search', host
         end
 
-        def query(query, type = nil)
-          type ||= 'ca_objects'
-          request :querySoap, type: type, query: query
+        def query(query, options = {})
+          request :querySoap, type: (options[:index] || 'ca_objects'), query: term
         end
 
       end

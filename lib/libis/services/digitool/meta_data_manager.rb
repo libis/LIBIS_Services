@@ -6,13 +6,13 @@ require 'iconv'
 
 require 'libis/services/soap_client'
 
-module LIBIS
+module Libis
   module Services
-    module DigitoolService
+    module Digitool
 
       # noinspection RubyStringKeysInHashInspection
       class MetaDataManager
-        include Singleton, LIBIS::Services::SoapClient
+        include Singleton, Libis::Services::SoapClient
 
         def initialize
           setup 'MetaDataManager'
@@ -54,14 +54,14 @@ module LIBIS
         end
 
         def create_dc_record_from_xml(xml_doc)
-          doc = LIBIS::Tools::XmlDocument.open xml_doc
+          doc = Libis::Tools::XmlDocument.open xml_doc
           records = doc.xpath('/records/record')
           return nil unless records.size > 0
           create_dc(records[0])
         end
 
         def create_dc_record(dc_info)
-          doc = LIBIS::Tools::XmlDocument.new
+          doc = Libis::Tools::XmlDocument.new
           doc.root = doc.create_node('record',
                                      :namespaces => {'dc' => 'http://purl.org/dc/elements/1.1',
                                                      'dcterms' => 'http://purl.org/dc/terms',
@@ -76,7 +76,7 @@ module LIBIS
         end
 
         def create_acl_record(acl_info = nil)
-          doc = LIBIS::Tools::XmlDocument.new
+          doc = Libis::Tools::XmlDocument.new
           doc.root = doc.create_node('access_right_md',
                                      :namespaces => {:node_ns => 'ar',
                                                      'ar' => 'http://com/exlibris/digitool/repository/api/xmlbeans',

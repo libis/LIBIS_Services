@@ -5,25 +5,17 @@ require 'libis/tools/logger'
 
 require 'libis/services/soap_client'
 
-module LIBIS
+module Libis
   module Services
-    module SharepointService
+    module Sharepoint
 
       class Search
-        include LIBIS::Services::SoapClient
-        include LIBIS::Tools::Logger
-
-        attr_accessor :host
-        #noinspection RubyResolve
-        attr_reader :term, :index, :base
-        #noinspection RubyResolve
-        attr_reader :num_records, :set_number
-        #noinspection RubyResolve
-        attr_reader :record_pointer, :session_id
+        include ::Libis::Services::SoapClient
+        include ::Libis::Tools::Logger
+        include ::Libis::Services::GenericSearch
 
         private
 
-        #noinspection RubyStringKeysInHashInspection
         MY_QUERY_SYMBOLS = {
             nil => 'Eq',
             '==' => 'Eq',
@@ -39,116 +31,95 @@ module LIBIS
 
         public
 
-        def initialize
-          @options = {}
-          @options[:ssl] = true
-          init
-          @server_url = 'https://www.groupware.kuleuven.be/sites/lias/'
-          @base_url = @server_url + '_vti_bin/'
-          @options[:wsdl_url] = "https://#{CGI.escape(username)}:#{CGI.escape(password)}@www.groupware.kuleuven.be/sites/lias/_vti_bin/Lists.asmx?wsdl"
-          configure "https://#{CGI.escape(username)}:#{CGI.escape(password)}@www.groupware.kuleuven.be/sites/lias/_vti_bin/Lists.asmx?wsdl", @options
+        def initialize(options = {})
+          options[:server_url] = (options[:url] || 'https://www.groupware.kuleuven.be/sites/lias') + (options[:url_ext] || '/_vti_bin')
+          options[:ssl] = true if options[:server_url] =~ /^https:/
+          # options[:soap_url] = options[:server_url].gsub(/^(https?):\/\/)/,"\\1#{CGI.escape(username)}:#{CGI.escape(password)}@") + '/Lists.asmx'
+          options[:wsse_auth] = [options[:username], options[:password]]
+          options[:soap_url] = options[:server_url] + '/Lists.asmx'
+          options[:wsdl_url] = options[:soap_url] + '?wsdl'
+          configure options[:wsdl_url], options
+          options
         end
 
-        def username
-          return @username if @username
-          highline = HighLine.new($stdin, $stderr)
-          @username = highline.ask('User name (u-number): ') { |q| q.echo = true }.chomp
-        end
+        def query(term, options = {})
 
-        def password
-          return @password if @password
-          highline = HighLine.new($stdin, $stderr)
-          @password = highline.ask("Password for #{self.username}: ") { |q| q.echo = '*' }.chomp
-        end
+          options[:term] = term
 
-        def query(term, index, base, options = {})
+          options[:limit] ||= 100
+          options[:value_type] ||= 'Text'
+          options[:query_operator] = MY_QUERY_SYMBOLS[options[:query_operator] || '==']
 
-          @term = term
-          @index = index
-          @base = base
+          options[:query_operator] = 'BeginsWith' if term =~ /^[^*]+\*$/
+          options[:query_operator] = 'Contains' if term =~ /^\*[^*]+\*$/
 
-          @options[:username] ||= self.username
-          @options[:password] ||= self.password
+          restart_query options
 
-          @limit = options.delete(:limit) || 100
-          @value_type = options.delete(:value_type) || 'Text'
-          @query_operator = MY_QUERY_SYMBOLS[options.delete(:query_operator) || '==']
-
-          @query_operator = 'BeginsWith' if term =~ /^[^*]+\*$/
-          @query_operator = 'Contains' if term =~ /^\*[^*]+\*$/
-
-          @selection = options.delete(:selection) || nil
-
-          @field_selection = options.delete(:field_selection)
-
-          @options.merge! options
-
-          restart_query
+          options
 
         end
 
-        def each
+        def each(options)
 
           # we start with a new search
-          restart_query
-          get_next_set
+          restart_query options
+          get_next_set options
 
-          while records_to_process?
+          while records_to_process? options
 
-            yield @result[:records][@current]
+            yield options[:result][:records][options[:current]]
 
-            @current += 1
+            options[:current] += 1
 
-            get_next_set if require_next_set?
+            get_next_set(options) if require_next_set?(options)
 
           end
 
-          restart_query
+          restart_query(options)
 
         end
 
         protected
 
-        def restart_query
-          @start_id = 0
-          @result = nil
-          @current = 0
-          @set_count = 0
-          @next_set = nil
+        def restart_query(options)
+          options[:start_id] = 0
+          options[:result] = nil
+          options[:current] = 0
+          options[:set_count] = 0
+          options[:next_set] = nil
         end
 
-        def records_to_process?
-          @current < @set_count
+        def records_to_process?(options)
+          options[:current] < options[:set_count]
         end
 
-        def require_next_set?
-          @current >= @set_count and @next_set
+        def require_next_set?(options)
+          options[:current] >= options[:set_count] and options[:next_set]
         end
 
-        def get_next_set
+        def get_next_set(options)
 
-          @current = 0
-          @set_count = 0
+          options[:current] = 0
+          options[:set_count] = 0
 
           retry_count = MAX_QUERY_RETRY
 
           while retry_count > 0
 
-            Application.instance.logger.warn(self.class) { "Retrying (#{retry_count}) ..." } if retry_count < MAX_QUERY_RETRY
+            warn "Retrying (#{retry_count}) ..." if retry_count < MAX_QUERY_RETRY
 
-            #noinspection RubyStringKeysInHashInspection
             query = {
                 'Query' => {
                     'Where' => {
-                        @query_operator => {
+                        options[:query_operator] => {
                             'FieldRef' => '',
-                            'Value' => @term,
+                            'Value' => options[:term],
                             :attributes! => {
                                 'FieldRef' => {
-                                    'Name' => @index
+                                    'Name' => options[:index]
                                 },
                                 'Value' => {
-                                    'Type' => @value_type
+                                    'Type' => options[:value_type]
                                 }
                             }
                         }
@@ -156,13 +127,12 @@ module LIBIS
                 }
             }
 
-            #noinspection RubyStringKeysInHashInspection
             query_options = {
                 'QueryOptions' => {
                     'ViewAttributes' => '',
                     :attributes! => {
                         'ViewAttributes' => {
-                            'Scope' => "RecursiveAll"
+                            'Scope' => 'RecursiveAll'
                         }
                     }
                 }
@@ -171,43 +141,41 @@ module LIBIS
             now = Time.now
             window_start = Time.new(now.year, now.month, now.day, 12, 15)
             window_end = Time.new(now.year, now.month, now.day, 13, 15)
-            if @selection and now > window_start and now < window_end
-              query_options['QueryOptions']['Folder'] = @server_url + 'Gedeelde%20documenten/' + @selection + '/.'
+            if options[:selection] and now > window_start and now < window_end
+              query_options['QueryOptions']['Folder'] = options[:server_url] + 'Gedeelde%20documenten/' + options[:selection] + '/.'
             end
 
-            if @next_set
+            if options[:next_set]
               query_options['QueryOptions']['Paging'] = ''
-              #noinspection RubyStringKeysInHashInspection
-              query_options['QueryOptions'][:attributes!]['Paging'] = {'ListItemCollectionPositionNext' => @next_set}
+              query_options['QueryOptions'][:attributes!]['Paging'] = {'ListItemCollectionPositionNext' => options[:next_set]}
             end
 
-            #noinspection RubyStringKeysInHashInspection
             result = request 'GetListItems', {
                                                soap_options: {
-                                                   endpoint: 'https://www.groupware.kuleuven.be/sites/lias/_vti_bin/lists.asmx'
+                                                   endpoint: options[:soap_url]
                                                },
-                                               wsse_options: @options,
-                                               listName: @base,
+                                               wsse_auth: options[:wsse_auth],
+                                               listName: options[:base],
                                                viewName: '',
                                                query: query,
                                                viewFields: {'ViewFields' => ''},
-                                               rowLimit: @limit.to_s,
+                                               rowLimit: options[:limit].to_s,
                                                query_options: query_options,
                                                webID: ''
-                                           }
+                                           }, {}, options
 
             if result[:error]
-              Application.instance.logger.warn(self.class) { "SOAP error: '#{result[:error]}'" }
-              raise AbortException, "Too many SOAP errors, giving up." unless retry_count > 0
+              warn "SOAP error: '#{result[:error]}'"
+              raise RuntimeError, 'Too many SOAP errors, giving up.' unless retry_count > 0
             elsif result[:exception]
-              Application.instance.logger.warn(self.class) { "SOAP exception: '#{result[:exception].message}'" }
+              warn "SOAP exception: '#{result[:exception].message}'"
               raise result[:exception] unless retry_count > 0
             else
-              @result = result
-              @set_count = result[:count]
-              @next_set = result[:next_set]
+              options[:result] = result
+              options[:set_count] = result[:count]
+              options[:next_set] = result[:next_set]
               retry_count = 0
-              retry_count = MAX_QUERY_RETRY + 1 if @set_count == 0 and @next_set
+              retry_count = MAX_QUERY_RETRY + 1 if options[:set_count] == 0 and options[:next_set]
             end
 
             retry_count -= 1
@@ -216,7 +184,7 @@ module LIBIS
 
         end
 
-        def result_parser(result)
+        def result_parser(result, options)
 
           records = []
           result = result[:get_list_items_response][:get_list_items_result]
@@ -226,10 +194,9 @@ module LIBIS
           rows = data[:row]
           rows = [rows] unless rows.is_a? Array
 
-          #noinspection RubyResolve
           rows.each do |row|
-            if @selection.nil? or row[:ows_FileRef] =~ /^\d+;#sites\/lias\/Gedeelde documenten\/#@selection(|\/.*)$/
-              records << clean_row(row)
+            if options[:selection].nil? or row[:ows_FileRef] =~ /^\d+;#sites\/lias\/Gedeelde documenten\/#{options[:selection]}(|\/.*)$/
+              records << clean_row(row, options)
             end
           end
 
@@ -242,13 +209,13 @@ module LIBIS
 
         end
 
-        def clean_row(row)
+        def clean_row(row, options)
 
-          @fields_found ||= Set.new
-          row.keys.each { |k| @fields_found << k }
+          options[:fields_found] ||= Set.new
+          row.keys.each { |k| options[:fields_found] << k }
 
           fields_to_be_removed = [:ows_MetaInfo]
-          fields_to_be_removed = row.keys - @field_selection if @field_selection
+          fields_to_be_removed = row.keys - options[:field_selection] if options[:field_selection]
 
           record = SharepointRecord.new
 
@@ -264,6 +231,6 @@ module LIBIS
 
       end
 
-end
-end
+    end
+  end
 end

@@ -5,13 +5,13 @@ require 'singleton'
 require 'libis/services/soap_client'
 
 #noinspection RubyStringKeysInHashInspection
-module LIBIS
+module Libis
   module Services
-    module DigitoolService
+    module Digitool
 
       class DigitalEntityManager
         include Singleton
-        include LIBIS::Services::SoapClient
+        include Libis::Services::SoapClient
 
         def initialize
           setup 'DigitalEntityManager'
@@ -31,7 +31,7 @@ module LIBIS
           de_info = {'pid' => pid}
           de_options = {'metadata' => 'all', 'relation' => 'all'}
           de_call1 = create_digital_entity_call de_info, 'update', de_options
-          result = request :digital_entity_call, :general => general.to_s, :digital_entity_call => de_call1.to_s
+          result = request :digital_entity_call, :general => 200.to_s, :digital_entity_call => de_call1.to_s
           return result if result[:error] and result[:error].size > 0
           de_call2 = create_digital_entity_call de_info, 'delete'
           request :digital_entity_call, :general => general.to_s, :digital_entity_call => de_call2.to_s
@@ -153,7 +153,7 @@ module LIBIS
           # { 'metadata' => 'delta',
           #   'relation' => 'all',
           # }
-          digital_entity_call = LIBIS::Tools::XmlDocument.new
+          digital_entity_call = Libis::Tools::XmlDocument.new
           root = digital_entity_call.create_node('digital_entity_call',
                                                  :namespaces => {:node_ns => 'xb',
                                                                  'xb' => 'http://com/exlibris/digitool/repository/api/xmlbeans'})

@@ -1,3 +1,8 @@
+[![Gem Version](https://badge.fury.io/rb/libis-services.svg)](http://badge.fury.io/rb/libis-services)
+[![Build Status](https://travis-ci.org/Kris-LIBIS/LIBIS_Services.svg?branch=master)](https://travis-ci.org/Kris-LIBIS/LIBIS_Services)
+[![Coverage Status](https://img.shields.io/coveralls/Kris-LIBIS/LIBIS_Services.svg)](https://coveralls.io/r/Kris-LIBIS/LIBIS_Services)
+[![Dependency Status](https://gemnasium.com/Kris-LIBIS/LIBIS_Services.svg)](https://gemnasium.com/Kris-LIBIS/LIBIS_Services)
+
 # Services
 
 TODO: Write a gem description

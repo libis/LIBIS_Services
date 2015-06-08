@@ -3,12 +3,12 @@
 require 'libis/tools/xml_document'
 require 'libis/services/soap_client'
 
-module LIBIS
+module Libis
   module Services
-    module DigitoolService
+    module Digitool
 
       class DigitoolConnector
-        include LIBIS::Services::SoapClient
+        include Libis::Services::SoapClient
 
         def initialize(service, host = nil)
           @host = host || 'aleph08.libis.kuleuven.be:1801'
@@ -22,13 +22,13 @@ module LIBIS
 
         protected
 
-        def result_parser(response)
+        def result_parser(response, options = {})
           result = get_xml_response(response)
           error = nil
           pids = nil
           mids = nil
           de = nil
-          doc = LIBIS::Tools::XmlDocument.parse(result)
+          doc = Libis::Tools::XmlDocument.parse(result)
           doc.xpath('//error_description').each { |x| error ||= []; error << x.content unless x.content.nil? }
           doc.xpath('//pid').each { |x| pids ||= []; pids << x.content unless x.content.nil? }
           doc.xpath('//mid').each { |x| mids ||= []; mids << x.content unless x.content.nil? }

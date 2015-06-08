@@ -2,9 +2,9 @@
 
 require_relative 'connector'
 
-module LIBIS
+module Libis
   module Services
-    module CollectiveAccessService
+    module CollectiveAccess
 
       class ItemInfo < Connector
 

@@ -1,11 +1,11 @@
 # coding: utf-8
 
-require 'rest_client'
+require 'rest-client'
 require 'nori'
 require 'json'
 require 'gyoku'
 
-module LIBIS
+module Libis
   module Services
 
     module RestClient

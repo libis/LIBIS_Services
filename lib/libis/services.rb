@@ -1,6 +1,9 @@
 module Libis
   module Services
 
+    autoload :HttpError, 'libis/services/http_error'
+    autoload :SoapError, 'libis/services/soap_error'
+
     autoload :SoapClient, 'libis/services/soap_client'
     autoload :RestClient, 'libis/services/rest_client'
 

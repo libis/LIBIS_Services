@@ -34,13 +34,9 @@ module Libis
         def do_request(operation, args = {})
           reply = request operation.to_s.to_sym, args
           key = "#{operation.to_s}_response".to_sym
-          return nil unless reply.has_key? key
+          return reply unless reply.has_key? key
           reply[key].delete :'@xmlns:ns1'
           reply[key]
-        end
-
-        def result_parser(response, options = {})
-          response
         end
 
         def parse_data(data, data_tag = nil)

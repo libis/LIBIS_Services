@@ -14,12 +14,12 @@ module Libis
         end
 
         def get_mets(ie, flags = 0)
-          result = request(:get_ie, pds_handle: @pds_handle, ie_pid: ie, flags: flags)
+          result = do_request :get_ie, pds_handle: @pds_handle, ie_pid: ie, flags: flags
           Libis::Tools::MetsFile.parse(result)
         end
 
         def get_metadata(ie)
-          request(:get_md, pds_handle: @pds_handle, 'PID' => ie)
+          do_request :get_md, pds_handle: @pds_handle, 'PID' => ie
         end
 
         protected

@@ -3,6 +3,7 @@ require_relative 'producer_handler'
 require_relative 'deposit_handler'
 require_relative 'sip_handler'
 require_relative 'ie_handler'
+require_relative 'collection_handler'
 
 require 'libis/tools/mets_file'
 
@@ -26,6 +27,7 @@ module Libis
           @deposit_service = Libis::Services::Rosetta::DepositHandler.new base_url
           @sip_service = Libis::Services::Rosetta::SipHandler.new base_url
           @ie_service = Libis::Services::Rosetta::IeHandler.new base_url
+          @collection_service = Libis::Services::Rosetta::CollectionHandler.new base_url
         end
 
         # @param [String] name

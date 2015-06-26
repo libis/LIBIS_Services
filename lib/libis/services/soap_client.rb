@@ -3,6 +3,8 @@
 require 'savon'
 
 require 'libis/tools/xml_document'
+require_relative 'http_error'
+require_relative 'soap_error'
 
 module Libis
   module Services
@@ -27,34 +29,22 @@ module Libis
       end
 
       def request(method, message = {}, call_options = {}, parse_options = {})
-        begin
-          response = client.call(method, message: message) do |locals|
-            call_options.each do |key, value|
-              locals.send(key, value)
-            end
+        response = client.call(method, message: message) do |locals|
+          call_options.each do |key, value|
+            locals.send(key, value)
           end
-
-          return yield(response) if block_given?
-          parse_result(response, parse_options)
-
-        rescue Exception => ex
-          return {error: ex}
         end
 
+        return yield(response) if block_given?
+        parse_result(response, parse_options)
       end
 
       protected
 
       def parse_result(response, options = {})
-        unless response.success?
-          error = []
-          error << "SOAP Error: #{response.soap_fault.to_s}" if response.soap_fault?
-          error << "HTTP Error: #{response.http_error.to_s}" if response.http_error?
-          raise RuntimeError error.join('\n')
-        end
-        result = result_parser(response.body, options)
-        raise RuntimeError, result[:error] if (result.is_a?(Hash) && result[:error])
-        result
+        raise SoapError.new response.soap_fault.to_hash if response.soap_fault?
+        raise HttpError.new response.http_error.to_hash if response.http_error?
+        self.result_parser(response.body, options)
       end
 
       def result_parser(response, options = {})

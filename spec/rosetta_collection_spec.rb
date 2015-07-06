@@ -1,6 +1,5 @@
 # encoding: utf-8
 require_relative 'spec_helper'
-require 'yaml'
 
 require 'libis/tools/config_file'
 
@@ -114,6 +113,8 @@ describe 'Rosetta Producer Service' do
 
 
     it 'create new collection' do
+      collection_data[:publish] = true
+      collection_data[:navigate] = true
       new_collection_id = collection_service.create(collection_data)
       expect(new_collection_id).not_to be_nil
       expect(new_collection_id).to be_a String
@@ -151,10 +152,16 @@ describe 'Rosetta Producer Service' do
       end.to raise_error(Libis::Services::SoapError, /invalid_collection_info_exception.*Invalid Parent Id: 0/)
     end
 
-    it 'not found' do
+    it 'not found by id' do
       expect do
         collection_service.get(0)
       end.to raise_error(Libis::Services::SoapError, /no_collection_found_exception.*collection with id: 0 not found/)
+    end
+
+    it 'not found by name' do
+      expect do
+        collection_service.find('foo')
+      end.to raise_error(Libis::Services::SoapError, /no_collection_found_exception.*collection with name: foo not found/)
     end
 
   end

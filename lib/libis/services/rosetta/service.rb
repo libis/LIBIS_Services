@@ -18,7 +18,7 @@ module Libis
 
       class Service
 
-        attr_reader :pds_service, :producer_service, :deposit_service, :sip_service, :ie_service
+        attr_reader :pds_service, :producer_service, :deposit_service, :sip_service, :ie_service, :collection_service
 
         # @param [String] base_url
         def initialize(base_url = 'http://depot.lias.be', pds_url = 'https://pds.libis.be')

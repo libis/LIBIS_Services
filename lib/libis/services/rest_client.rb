@@ -18,39 +18,41 @@ module Libis
       def get(path, params = {}, headers = {}, &block)
         response = client[path].get({params: params}.merge headers, &block)
         parse_result response, &block
+      rescue ::RestClient::Exception => e
+        return {error_type: e.class.name, error_name: e.message, response: parse_result(e.response, &block)}
       end
 
       def post_url(path, params = {}, headers = {}, &block)
         response = client[path].post({params: params}.merge headers, &block)
         parse_result response, &block
+      rescue ::RestClient::Exception => e
+        return {error_type: e.class.name, error_name: e.message, response: parse_result(e.response, &block)}
       end
 
       def post_data(path, payload, headers = {}, &block)
         response = client[path].post(payload, headers, &block)
         parse_result response, &block
+      rescue ::RestClient::Exception => e
+        return {error_type: e.class.name, error_name: e.message, response: parse_result(e.response, &block)}
       end
 
       def put_url(path, params = {}, headers = {}, &block)
         response = client[path].put({params: params}.merge headers, &block)
         parse_result response, &block
+      rescue ::RestClient::Exception => e
+        return {error_type: e.class.name, error_name: e.message, response: parse_result(e.response, &block)}
       end
 
       def put_data(path, payload, headers = {}, &block)
         response = client[path].put(payload, headers, &block)
         parse_result response, &block
+      rescue ::RestClient::Exception => e
+        return {error_type: e.class.name, error_name: e.message, response: parse_result(e.response, &block)}
       end
 
       protected
 
       def parse_result(response)
-        case response.code.to_i
-          when 0..300
-            # success, we continue
-          else
-            # just return the response
-            return response
-        end
-
         block_given? ? yield(response) : result_parser(response)
       end
 

@@ -16,7 +16,7 @@ module Libis
         end
 
         def query(query, options = {})
-          request :querySoap, type: (options[:index] || 'ca_objects'), query: term
+          request :querySoap, type: (options[:index] || 'ca_objects'), query: query
         end
 
       end

@@ -13,3 +13,6 @@
 *.a
 mkmf.log
 /.idea/
+
+spec/credentials*
+lib/jar

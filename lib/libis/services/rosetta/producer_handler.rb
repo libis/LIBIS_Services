@@ -1,112 +1,121 @@
 # encoding: utf-8
-
 require 'libis/tools/extend/hash'
-require_relative 'client'
+require 'libis/tools/xml_document'
+require_relative 'producer'
+require_relative 'user'
 
+require_relative 'client'
 module Libis
   module Services
     module Rosetta
 
       class ProducerHandler < Libis::Services::Rosetta::Client
 
+
         def initialize(base_url = 'http://depot.lias.be', options = {})
-          super 'deposit', 'ProducerWebServices', {url: base_url}.merge(options)
+          super 'backoffice', 'ProducerWebServices', {url: base_url}.merge(options)
         end
 
         def user_id(external_id)
-          reply = do_request :get_internal_user_id_by_external_id, arg0: external_id
-          reply[:get_internal_user_id_by_external_id]
+          call :get_internal_user_id_by_external_id, arg0: external_id
         end
 
         def is_user?(user_id)
-          do_request :is_user_exists, arg0: @pds_handle, arg1: user_id
+          call :is_user_exists, arg0: @pds_handle, arg1: user_id
         end
 
         def producer(producer_id, producer_info = nil)
           if producer_info
-            do_request :update_producer, arg0: @pds_handle, arg1: producer_id, arg2: producer_info
+            info = producer(producer_id)
+            return nil if info.nil?
+            (producer_info.is_a?(Rosetta::Producer) ? producer_info.attributes : producer_info).each do |name, value|
+              info[name] = value
+            end
+            call :update_producer, arg0: @pds_handle, arg1: producer_id, arg2: info.to_xml
           else
-            do_request :get_producer_details, arg0: @pds_handle, arg1: producer_id
+            request_object :get_producer_details, Rosetta::Producer, arg0: @pds_handle, arg1: producer_id
           end
         end
 
-        def producer=(producer_info)
-          do_request :create_producer, arg0: @pds_handle, arg1: producer_info
+        def new_producer(producer_info)
+          producer_info = Rosetta::Producer.new(producer_info) unless producer_info.is_a?(Rosetta::Producer)
+          call :create_producer, arg0: @pds_handle, arg1: producer_info.to_xml
         end
 
-        def producer!(producer_id)
-          do_request :remove_producer, arg0: @pds_handle, arg1: producer_id
+        def delete_producer(producer_id)
+          call :remove_producer, arg0: @pds_handle, arg1: producer_id
         end
 
         def agent(agent_id, agent_info = nil)
           if agent_info
-            do_request :update_producer_agent, arg0: @pds_handle, arg1: agent_id, arg2: agent_info
+            info = agent(agent_id)
+            return nil if info.nil?
+            (agent_info.is_a?(Rosetta::User) ? agent_info.attributes : agent_info).each do |name, value|
+              info[name] = value
+            end
+            call :update_producer_agent, arg0: @pds_handle, arg1: agent_id, arg2: info.to_xml
           else
-            do_request :get_producer_agent, arg0: @pds_handle, arg1: agent_id
+            request_object :get_producer_agent, Rosetta::User, arg0: @pds_handle, arg1: agent_id
           end
         end
 
-        def agent=(agent_info)
-          do_request :create_producer_agent, arg0: @pds_handle, arg1: agent_info
+        def new_agent(agent_info)
+          agent_info = Rosetta::User.new(agent_info) unless agent_info.is_a?(Rosetta::User)
+          call :create_producer_agent, arg0: @pds_handle, arg1: agent_info.to_xml
         end
 
-        def agent!(agent_id)
-          do_request :remove_producer_agent, arg0: @pds_handle, arg1: agent_id
+        def delete_agent(agent_id)
+          call :remove_producer_agent, arg0: @pds_handle, arg1: agent_id
         end
 
         def link_agent(agent_id, producer_id)
-          do_request :link_producer_agent_to_producer, arg0: @pds_handle, arg1: producer_id, arg2: agent_id
+          call :link_producer_agent_to_producer, arg0: @pds_handle, arg1: producer_id, arg2: agent_id
         end
 
         def unlink_agent(agent_id, producer_id)
-          do_request :unlink_producer_agent_from_producer, arg0: @pds_handle, arg1: producer_id, arg2: agent_id
+          call :unlink_producer_agent_from_producer, arg0: @pds_handle, arg1: producer_id, arg2: agent_id
         end
 
         def agent_producers(agent_id, institution = nil)
           if institution
-            reply = do_request :get_producers_of_producer_agent_with_ins, arg0: agent_id, arg1: institution
-            get_array_from_reply(reply, :producers_result_with_ins)
+            request_array :get_producers_of_producer_agent_with_ins, arg0: agent_id, arg1: institution
           else
-            reply = do_request :get_producers_of_producer_agent, arg0: agent_id
-            get_array_from_reply(reply, :producers_result)
+            request_array :get_producers_of_producer_agent, arg0: agent_id
           end
         end
 
-        def contact(user_id, user_info = nil)
-          if user_info
-            do_request :update_contact, arg0: @pds_handle, arg1: user_id, arg2: user_info
+        def contact(contact_id, contact_info = nil)
+          if contact_info
+            info = contact(contact_id)
+            return nil if info.nil?
+            (contact_info.is_a?(Rosetta::User) ? contact_info.attributes : contact_info).each do |name, value|
+              info[name] = value
+            end
+            call :update_contact, arg0: @pds_handle, arg1: contact_id, arg2: info.to_xml
           else
-            do_request :get_contact, arg0: @pds_handle, arg1: user_id
+            request_object :get_contact, Rosetta::User, arg0: @pds_handle, arg1: contact_id
           end
         end
 
-        def contact=(user_info)
-            do_request :create_contact, arg0: @pds_handle, arg1: user_info
+        def new_contact(contact_info)
+          contact_info = Rosetta::User.new(contact_info) unless contact_info.is_a?(Rosetta::User)
+          call :create_contact, arg0: @pds_handle, arg1: contact_info.to_xml
         end
 
-        def contact!(user_id)
-            do_request :remove_contact, arg0: @pds_handle, arg1: user_id
+        def delete_contact(contact_id)
+          call :remove_contact, arg0: @pds_handle, arg1: contact_id
         end
 
         def link_contact(contact_id, producer_id, primary = true)
-          do_request :link_contact_to_producer, arg0: @pds_handle, arg1: producer_id, arg2: contact_id, arg3: (!!primary).to_s.upcase
+          call :link_contact_to_producer, arg0: @pds_handle, arg1: producer_id, arg2: contact_id, arg3: (!!primary).to_s.upcase
         end
 
         def unlink_contact(contact_id, producer_id)
-          do_request :unlink_contact_from_producer, arg0: @pds_handle, arg1: producer_id, arg2: contact_id
+          call :unlink_contact_from_producer, arg0: @pds_handle, arg1: producer_id, arg2: contact_id
         end
 
         def material_flows(producer_id)
-          reply = do_request :get_material_flows_of_producer, arg0: producer_id
-          get_array_from_reply(reply, :material_flows_result)
-        end
-
-        protected
-
-        def get_array_from_reply(reply, tag)
-          data = parse_xml_data(reply[tag], :deposit_data, :dep_data)
-          return [] if data.nil?
-          data.is_a?(Array) ? data : [data]
+          request_array :get_material_flows_of_producer, arg0: producer_id
         end
 
       end

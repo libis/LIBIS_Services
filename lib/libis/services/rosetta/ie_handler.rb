@@ -14,23 +14,13 @@ module Libis
         end
 
         def get_mets(ie, flags = 0)
-          result = do_request :get_ie, pds_handle: @pds_handle, ie_pid: ie, flags: flags
+          result = call_raw :get_ie, pds_handle: @pds_handle, ie_pid: ie, flags: flags
           Libis::Tools::MetsFile.parse(result)
         end
 
         def get_metadata(ie)
-          do_request :get_md, pds_handle: @pds_handle, 'PID' => ie
-        end
-
-        protected
-
-        def result_parser(response, options = {})
-          result = super(response)
-          if result.is_a? String
-            xml_result = Libis::Tools::XmlDocument.parse(result) rescue nil
-            result = xml_result unless xml_result.nil?
-          end
-          result
+          result = call_raw :get_md, pds_handle: @pds_handle, 'PID' => ie
+          Libis::Tools::MetsFile.parse(result)
         end
 
       end

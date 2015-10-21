@@ -31,40 +31,74 @@ module Libis
 
         protected
 
-        def do_request(operation, args = {})
-          reply = request operation.to_s.to_sym, args
-          key = "#{operation.to_s}_response".to_sym
-          return reply unless reply.has_key? key
-          reply[key].delete :'@xmlns:ns1'
-          reply[key]
-        end
+        def call_raw(operation, args = {})
+          data = request operation.to_s.to_sym, args
 
-        def parse_data(data, data_tag = nil)
-          puts data
-          err = data.delete :is_error
-          if err
-            error data.delete :error_message
-            return nil
-          end
-          data = data[data_tag] if data_tag
+          # remove wrapper
+          data = data["#{operation}_response".to_sym]
+          data.delete(:'@xmlns:ns1')
+
+          # drill down the returned Hash
+          data = data.first.last while data.is_a?(Hash) && 1 == data.size
+
           data
         end
 
-        def parse_xml_data(data, data_tag = nil, sub_tag = nil)
-          xml_data = Libis::Tools::XmlDocument.parse(data).
-              to_hash(strip_namespaces: true, convert_tags_to: lambda { |tag| tag.snakecase.to_sym} )
-          xml_data = xml_data[data_tag] if data_tag
-          parse_data(xml_data, sub_tag)
+        def call(operation, args = {})
+          # upstream call
+          data = call_raw(operation, args)
+
+          # try to parse as XML
+          if data.is_a?(String)
+            xml_data = Libis::Tools::XmlDocument.parse(data).to_hash(
+                empty_tag_value: nil,
+                delete_namespace_attributes: true,
+                strip_namespaces: true,
+                convert_tags_to: lambda { |tag| tag.to_sym }
+            )
+            data = xml_data unless xml_data.empty?
+          end
+
+          return data unless data.is_a?(Hash)
+
+          # drill down
+          data = data.first.last if 1 == data.size
+
+          return data unless data.is_a?(Hash)
+
+          # check for errors
+          if data.delete :is_error
+            error data.delete :error_description
+            return nil
+          end
+
+          # only delete if there is other info. ProducerService isUserExists uses this field as return value.
+          data.delete :error_description if data.size > 1
+
+          # continue drilling down the Hash
+          data = data.first.last while data.is_a?(Hash) && 1 == data.size
+
+          # return
+          data
         end
 
+        def request_object(method, klass, args = {})
+          data = call method, args
+          return nil unless data.is_a?(Hash)
+          klass.new(data)
+        end
 
-        # @param [Hash] response
-        # @return [Libis::Tools::XmlDocument]
-        # def result_parser(response, options = {})
-        #   result = response.values.first.values.first rescue nil
-        #   return {error: result['message_desc']} if (result.is_a?(Hash) && result['is_error'])
-        #   result
-        # end
+        def request_array(method, args = {})
+          data = call method, args
+          data = data.split(/[\s,]+/) if data.is_a?(String)
+          data = [data] if data.is_a?(Hash)
+          data.is_a?(Array) ? data : []
+        end
+
+        def reqeust_object_array(method, klass, args = {})
+          data = request_array(method, args)
+          data.map { |x| klass.new(x) }
+        end
 
       end
 

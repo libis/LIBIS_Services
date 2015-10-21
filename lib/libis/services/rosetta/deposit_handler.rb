@@ -1,7 +1,6 @@
 # encoding: utf-8
 
-require 'libis/tools/extend/hash'
-
+require_relative 'deposit_activity'
 require_relative 'client'
 
 module Libis
@@ -19,7 +18,7 @@ module Libis
         # @param [Object] producer_id ID of the Producer
         # @param [Object] deposit_set_id ID of the set of deposits
         def submit(flow_id, subdir, producer_id, deposit_set_id = '1')
-          do_request :submit_deposit_activity,
+          call :submit_deposit_activity,
                      arg0: @pds_handle,
                      arg1: flow_id,
                      arg2: subdir,
@@ -78,8 +77,7 @@ module Libis
               arg6: options[:start_record],
               arg7: options[:end_record]
           }.cleanup
-          reply = do_request :get_deposit_activity_by_submit_date, params
-          get_array_from_reply(reply, :submit_date_result)
+          request_activities :get_deposit_activity_by_submit_date, params
         end
 
         # @param [String] date_from Start date for lookup range
@@ -110,8 +108,7 @@ module Libis
               arg7: options[:start_record],
               arg8: options[:end_record]
           }.cleanup
-          reply = do_request :get_deposit_activity_by_submit_date_by_material_flow, params
-          get_array_from_reply(reply, :submit_date_result_by_mf)
+          request_activities :get_deposit_activity_by_submit_date_by_material_flow, params
         end
 
         # @param [String] date_from Start date for lookup range
@@ -140,8 +137,7 @@ module Libis
               arg6: options[:start_record],
               arg7: options[:end_record]
           }.cleanup
-          reply = do_request :get_deposit_activity_by_update_date, params
-          get_array_from_reply(reply, :submit_date_result)
+          request_activities :get_deposit_activity_by_update_date, params
         end
 
         # @param [String] date_from Start date for lookup range
@@ -172,22 +168,18 @@ module Libis
               arg7: options[:start_record],
               arg8: options[:end_record]
           }.cleanup
-          reply = do_request :get_deposit_activity_by_update_date_by_material_flow, params
-          get_array_from_reply(reply, :submit_flow_result)
+          request_activities :get_deposit_activity_by_update_date_by_material_flow, params
         end
 
         protected
 
-        def get_array_from_reply(reply, tag)
-          data = parse_xml_data(reply[tag], :deposit_activity_list)
-          parse_deposit_info(data)
+        def request_activities(method, args = {})
+          data = call method, args
+          list = Rosetta::DepositActivityList.new(total_records: data[:total_records])
+          records = data[:records][:record]
+          list.records = (records.is_a?(Array) ? records : [records]).map { |record| Rosetta::DepositActivity.new(record)}
+          list
         end
-
-        def parse_deposit_info(response)
-          list = response[:records][:record] rescue []
-          list.is_a?(Array) ? list : [list]
-        end
-
       end
 
     end

@@ -10,31 +10,59 @@ require 'libis/services/rosetta/deposit_handler'
 
 describe 'Rosetta PDS Service' do
 
-  let!(:credentials) { Libis::Tools::ConfigFile.new File.join(File.dirname(__FILE__), 'credentials.yml') }
+  let!(:credentials) { Libis::Tools::ConfigFile.new File.join(File.dirname(__FILE__), 'credentials-test.yml') }
   let!(:pds_handler) do
     # noinspection RubyResolve
     Libis::Services::Rosetta::PdsHandler.new(credentials.pds_url)
   end
 
-  let(:handle) do
-    # noinspection RubyResolve
-    pds_handler.login(
-        credentials.admin.user,
-        credentials.admin.password,
-        credentials.admin.institute
-    )
-  end
+  let(:handle) { pds_handler.login(admin_usr, admin_pwd, admin_ins) }
+
+  # noinspection RubyResolve
+  let(:admin) { credentials.admin }
+  # noinspection RubyResolve
+  let(:admin_usr) { admin.user }
+  # noinspection RubyResolve
+  let(:admin_pwd) {admin.password}
+  # noinspection RubyResolve
+  let(:admin_ins) {admin.institute}
 
   it 'should login and return a handle' do
     expect(handle).to_not be_nil
   end
 
-  # noinspection RubyResolve
+  it 'should not login with wrong user' do
+    expect(    pds_handler.login(
+                   'deadbeaf',
+                   admin_pwd,
+                   admin_ins
+               )
+    ).to be_nil
+  end
+
+  it 'should not login with wrong pasword' do
+    expect(    pds_handler.login(
+                   admin_usr,
+                   'deadbeaf',
+                   admin_ins
+               )
+    ).to be_nil
+  end
+
+  it 'should not login with wrong institution' do
+    expect(    pds_handler.login(
+                   admin_usr,
+                   admin_pwd,
+                   'deadbeaf'
+               )
+    ).to be_nil
+  end
+
   it 'should return patron info' do
     bor_info = pds_handler.user_info handle
-    expect(bor_info[:bor_info][:id]).to eq credentials.admin.user
-    expect(bor_info[:bor_info][:name]).to eq credentials.admin.user
-    expect(bor_info[:bor_info][:institute]).to eq credentials.admin.institute
+    expect(bor_info[:bor_info][:id]).to eq admin_usr
+    expect(bor_info[:bor_info][:name]).to eq admin_usr
+    expect(bor_info[:bor_info][:institute]).to eq admin_ins
 
   end
 
@@ -43,6 +71,8 @@ describe 'Rosetta PDS Service' do
   end
 
   it 'should logout using an invalid handle' do
+    # Disabled: Rosetta PDS error
+    # expect(pds_handler.logout('abcdef')).to be_falsy
     expect(pds_handler.logout('abcdef')).to be_truthy
   end
 

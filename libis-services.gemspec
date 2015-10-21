@@ -25,6 +25,7 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency 'rspec', '~> 3.1'
   gem.add_development_dependency 'simplecov', '~> 0.9'
   gem.add_development_dependency 'coveralls', '~> 0.7'
+  gem.add_development_dependency 'equivalent-xml', '~> 0.6'
 
   gem.add_runtime_dependency 'libis-tools', '~> 0.9'
   gem.add_runtime_dependency 'iconv', '~> 1.0'

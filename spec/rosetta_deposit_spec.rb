@@ -9,7 +9,7 @@ require 'libis/services/rosetta/deposit_handler'
 
 describe 'Rosetta Deposit Service' do
 
-  let(:credentials) { Libis::Tools::ConfigFile.new File.join(File.dirname(__FILE__), 'credentials.yml') }
+  let(:credentials) { Libis::Tools::ConfigFile.new File.join(File.dirname(__FILE__), 'credentials-test.yml') }
   let(:pds_handler) do
     # noinspection RubyResolve
     Libis::Services::Rosetta::PdsHandler.new(credentials.pds_url)
@@ -26,38 +26,57 @@ describe 'Rosetta Deposit Service' do
 
   subject(:deposit_handler) do
     # noinspection RubyResolve
-    Libis::Services::Rosetta::DepositHandler.new credentials.rosetta_url, log: true, log_level: :debug
+    Libis::Services::Rosetta::DepositHandler.new credentials.rosetta_url,
+                                                 log: credentials.debug,
+                                                 log_level: credentials.debug_level
   end
 
   before :each do
     deposit_handler.pds_handle = handle
   end
 
-  it 'should get list of deposits' do
+  it 'should get list of deposits by date' do
 
-    deposits = deposit_handler.get_by_submit_flow('01/01/2010', '31/12/2015', '2', status: 'All')
+    deposits = deposit_handler.get_by_submit_date('13/10/2015', '13/10/2015', status: 'All')
 
-    expect(deposits).to eq [
-                               {
-                                   deposit_activity_id: '55401',
-                                   creation_date: '02/12/2014',
-                                   status: 'Approved',
-                                   title: 'Test DAV',
-                                   producer_agent_id: '100',
-                                   submit_date: '02/12/2014',
-                                   update_date: '02/12/2014',
-                                   sip_id: '54854',
-                                   producer_id: '35202',
-                                   sip_reason: nil
-                               }
-                           ]
+    # noinspection RubyResolve
+    expect(deposits.to_hash[:records]).to eq [
+                                                 {
+                                                     deposit_activity_id: 55662,
+                                                     creation_date: '13/10/2015',
+                                                     status: 'Approved',
+                                                     title: 'test ingest - 1',
+                                                     producer_agent_id: credentials.admin.user_id.to_i,
+                                                     submit_date: '13/10/2015',
+                                                     update_date: '13/10/2015',
+                                                     sip_id: 55010,
+                                                     producer_id: 23106349,
+                                                     sip_reason: 'Files Rejected'
+                                                 }
+                                             ]
   end
 
-  it 'should get list of deposits' do
+  it 'should get list of deposits by date and material flow' do
 
-    deposits = deposit_handler.get_by_submit_date('01/01/2010', '31/12/2015', status: 'Approved')
+    # noinspection RubyResolve
+    deposits = deposit_handler.get_by_submit_flow('13/10/2015', '13/10/2015', credentials.material_flow.manual.id, status: 'All')
 
-    expect(deposits).to eq []
+    # noinspection RubyResolve
+    expect(deposits.to_hash[:records]).to eq [
+                                                 {
+                                                     deposit_activity_id: 55662,
+                                                     creation_date: '13/10/2015',
+                                                     status: 'Approved',
+                                                     title: 'test ingest - 1',
+                                                     producer_agent_id: credentials.admin.user_id.to_i,
+                                                     submit_date: '13/10/2015',
+                                                     update_date: '13/10/2015',
+                                                     sip_id: 55010,
+                                                     producer_id: 23106349,
+                                                     sip_reason: 'Files Rejected'
+                                                 }
+                                             ]
   end
+
 
 end

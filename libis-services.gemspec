@@ -32,6 +32,7 @@ Gem::Specification.new do |gem|
   gem.add_runtime_dependency 'highline', '~> 1.7'
   gem.add_runtime_dependency 'savon', '~> 2.11'
   gem.add_runtime_dependency 'rest-client', '~> 1.8'
+  gem.add_runtime_dependency 'oai', '~> 0.4'
   gem.add_runtime_dependency 'virtus', '~> 1.0'
   gem.add_runtime_dependency 'write_xlsx', '~> 0.83'
   gem.add_runtime_dependency 'awesome_print', '~> 1.6'

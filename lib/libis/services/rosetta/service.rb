@@ -4,6 +4,7 @@ require_relative 'deposit_handler'
 require_relative 'sip_handler'
 require_relative 'ie_handler'
 require_relative 'collection_handler'
+require_relative 'oai_pmh'
 
 require 'libis/tools/mets_file'
 
@@ -28,6 +29,7 @@ module Libis
           @sip_service = Libis::Services::Rosetta::SipHandler.new base_url
           @ie_service = Libis::Services::Rosetta::IeHandler.new base_url
           @collection_service = Libis::Services::Rosetta::CollectionHandler.new base_url
+          @oai_pmh_service = Libis::Services::Rosetta::OaiPmh.new base_url
         end
 
         # @param [String] name

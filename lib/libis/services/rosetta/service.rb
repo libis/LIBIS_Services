@@ -42,6 +42,7 @@ module Libis
           @deposit_service.pds_handle = handle
           @sip_service.pds_handle = handle
           @ie_service.pds_handle = handle
+          @collection_service.pds_handle = handle
           handle
         end
 

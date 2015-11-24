@@ -20,7 +20,8 @@ module Libis
         end
 
         def get_ies(sip_id)
-          request_array :get_sip_i_es, arg0: sip_id
+          request_array(:get_sip_i_es, arg0: sip_id).map {|ie| Rosetta::Ie.new(pid: ie)}
+
         end
 
       end

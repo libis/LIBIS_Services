@@ -20,7 +20,7 @@ describe 'Rosetta SIP Service' do
     { module: 'PER', stage: 'Finished', status: 'FINISHED' }
   }
 
-  let(:expected_ies) { ['IE403595'] }
+  let(:expected_ies) { [{pid: 'IE403595'}] }
 
   it 'should get SIP info' do
 
@@ -33,7 +33,7 @@ describe 'Rosetta SIP Service' do
 
     ies = sip_handler.get_ies(55010)
     expect(ies).not_to be_nil
-    expect(ies).to match_array expected_ies
+    expect(ies.map(&:to_h)).to match_array expected_ies
   end
 
 end

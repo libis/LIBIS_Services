@@ -1,12 +1,13 @@
 # coding: utf-8
 
-require 'libis/services/soap_client'
+require 'awesome_print'
+
 require 'libis/tools/extend/hash'
 require 'libis/tools/config'
 require 'libis/tools/logger'
 
-require 'awesome_print'
-
+require 'libis/services/soap_client'
+require 'libis/services/service_error'
 module Libis
   module Services
     module Rosetta
@@ -68,8 +69,8 @@ module Libis
 
           # check for errors
           if data.delete :is_error
-            error data.delete :error_description
-            return nil
+            msg = data.delete(:error_description) || data.delete(:message_desc)
+            raise Libis::Services::ServiceError.new(msg)
           end
 
           # only delete if there is other info. ProducerService isUserExists uses this field as return value.
@@ -95,7 +96,7 @@ module Libis
           data.is_a?(Array) ? data : []
         end
 
-        def reqeust_object_array(method, klass, args = {})
+        def request_object_array(method, klass, args = {})
           data = request_array(method, args)
           data.map { |x| klass.new(x) }
         end

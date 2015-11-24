@@ -11,7 +11,7 @@ describe 'Primo search service' do
     it 'default return result' do
       result = subject.query 'foo'
       expect(result.keys).to eq [:count, :from, :to, :step, :data]
-      expect(result[:data].size).to eq [result[:count], result[:step]].min
+      expect(result[:data].size).to eq [result[:count], result[:step] - 1].min
     end
 
   end

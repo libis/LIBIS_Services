@@ -89,7 +89,7 @@ describe 'Rosetta Collection Service' do
         },
         md_source: [],
         navigate: true,
-        publish: false,
+        publish: true,
         external_id: '9999',
         external_system: 'CollectiveAccess'
     } }

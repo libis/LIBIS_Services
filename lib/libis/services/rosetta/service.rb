@@ -17,19 +17,20 @@ module Libis
   module Services
     module Rosetta
 
+      # noinspection RubyTooManyInstanceVariablesInspection
       class Service
 
         attr_reader :pds_service, :producer_service, :deposit_service, :sip_service, :ie_service, :collection_service
 
         # @param [String] base_url
-        def initialize(base_url = 'http://depot.lias.be', pds_url = 'https://pds.libis.be')
+        def initialize(base_url = 'http://depot.lias.be', pds_url = 'https://pds.libis.be', opts = {})
           @pds_service = Libis::Services::Rosetta::PdsHandler.new pds_url
-          @producer_service = Libis::Services::Rosetta::ProducerHandler.new base_url
-          @deposit_service = Libis::Services::Rosetta::DepositHandler.new base_url
-          @sip_service = Libis::Services::Rosetta::SipHandler.new base_url
-          @ie_service = Libis::Services::Rosetta::IeHandler.new base_url
-          @collection_service = Libis::Services::Rosetta::CollectionHandler.new base_url
-          @oai_pmh_service = Libis::Services::Rosetta::OaiPmh.new base_url
+          @producer_service = Libis::Services::Rosetta::ProducerHandler.new base_url, opts
+          @deposit_service = Libis::Services::Rosetta::DepositHandler.new base_url, opts
+          @sip_service = Libis::Services::Rosetta::SipHandler.new base_url, opts
+          @ie_service = Libis::Services::Rosetta::IeHandler.new base_url, opts
+          @collection_service = Libis::Services::Rosetta::CollectionHandler.new base_url, opts
+          @oai_pmh_service = Libis::Services::Rosetta::OaiPmh.new base_url, opts
         end
 
         # @param [String] name

@@ -151,7 +151,7 @@ describe 'Rosetta Collection Service' do
 
 
     it 'create new collection' do
-       new_collection_id = collection_service.create(collection_data)
+      new_collection_id = collection_service.create(collection_data)
       expect(new_collection_id).not_to be_nil
       expect(new_collection_id).to be_a String
       expect(new_collection_id).to eq new_collection.id

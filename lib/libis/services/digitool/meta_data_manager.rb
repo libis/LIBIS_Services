@@ -1,7 +1,7 @@
 # coding: utf-8
 
 require 'singleton'
-require 'iconv'
+#require 'iconv'
 #require 'htmlentities'
 
 require 'libis/services/soap_client'

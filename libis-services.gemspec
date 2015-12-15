@@ -28,7 +28,6 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency 'equivalent-xml', '~> 0.6'
 
   gem.add_runtime_dependency 'libis-tools', '~> 0.9'
-  gem.add_runtime_dependency 'iconv', '~> 1.0'
   gem.add_runtime_dependency 'highline', '~> 1.7'
   gem.add_runtime_dependency 'savon', '~> 2.11'
   gem.add_runtime_dependency 'rest-client', '~> 1.8'

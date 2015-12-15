@@ -5,34 +5,36 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 
 require 'libis/services/version'
 
-Gem::Specification.new do |gem|
-  gem.name          = 'libis-services'
-  gem.version       = Libis::Services::VERSION
-  gem.authors       = ['Kris Dekeyser']
-  gem.email         = ['kris.dekeyser@libis.be']
-  gem.summary       = %q{LIBIS Services toolbox.}
-  gem.description   = %q{Set of classes that simplify connection to different LIBIS services.}
-  gem.homepage      = 'https://github.com/Kris-LIBIS/LIBIS_Services'
-  gem.license       = 'MIT'
+Gem::Specification.new do |spec|
+  spec.name          = 'libis-services'
+  spec.version       = Libis::Services::VERSION
+  spec.authors       = ['Kris Dekeyser']
+  spec.email         = ['kris.dekeyser@libis.be']
+  spec.summary       = %q{LIBIS Services toolbox.}
+  spec.description   = %q{Set of classes that simplify connection to different LIBIS services.}
+  spec.homepage      = 'https://github.com/Kris-LIBIS/LIBIS_Services'
+  spec.license       = 'MIT'
 
-  gem.files         = `git ls-files -z`.split("\x0")
-  gem.executables   = gem.files.grep(%r{^bin/}) { |f| File.basename(f) }
-  gem.test_files    = gem.files.grep(%r{^(test|spec|features)/})
-  gem.require_paths = ['lib']
+  spec.platform      = Gem::Platform::JAVA if defined?(RUBY_ENGINE) && RUBY_ENGINE == 'jruby'
 
-  gem.add_development_dependency 'bundler', '~> 1.6'
-  gem.add_development_dependency 'rake', '~> 10.3'
-  gem.add_development_dependency 'rspec', '~> 3.1'
-  gem.add_development_dependency 'simplecov', '~> 0.9'
-  gem.add_development_dependency 'coveralls', '~> 0.7'
-  gem.add_development_dependency 'equivalent-xml', '~> 0.6'
+  spec.files         = `git ls-files -z`.split("\x0")
+  spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
+  spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
+  spec.require_paths = ['lib']
 
-  gem.add_runtime_dependency 'libis-tools', '~> 0.9'
-  gem.add_runtime_dependency 'highline', '~> 1.7'
-  gem.add_runtime_dependency 'savon', '~> 2.11'
-  gem.add_runtime_dependency 'rest-client', '~> 1.8'
-  gem.add_runtime_dependency 'oai', '~> 0.4'
-  gem.add_runtime_dependency 'virtus', '~> 1.0'
-  gem.add_runtime_dependency 'write_xlsx', '~> 0.83'
-  gem.add_runtime_dependency 'awesome_print', '~> 1.6'
+  spec.add_development_dependency 'bundler', '~> 1.6'
+  spec.add_development_dependency 'rake', '~> 10.3'
+  spec.add_development_dependency 'rspec', '~> 3.1'
+  spec.add_development_dependency 'simplecov', '~> 0.9'
+  spec.add_development_dependency 'coveralls', '~> 0.7'
+  spec.add_development_dependency 'equivalent-xml', '~> 0.6'
+
+  spec.add_runtime_dependency 'libis-tools', '~> 0.9'
+  spec.add_runtime_dependency 'highline', '~> 1.7'
+  spec.add_runtime_dependency 'savon', '~> 2.11'
+  spec.add_runtime_dependency 'rest-client', '~> 1.8'
+  spec.add_runtime_dependency 'oai', '~> 0.4'
+  spec.add_runtime_dependency 'virtus', '~> 1.0'
+  spec.add_runtime_dependency 'write_xlsx', '~> 0.83'
+  spec.add_runtime_dependency 'awesome_print', '~> 1.6'
 end

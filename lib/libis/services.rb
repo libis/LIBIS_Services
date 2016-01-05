@@ -1,3 +1,5 @@
+require_relative 'services/version'
+
 module Libis
   module Services
 

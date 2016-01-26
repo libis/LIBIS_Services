@@ -114,8 +114,11 @@ describe 'Primo Limo service' do
     }
 
     it 'get record' do
-      result = subject.get_marc('32LIBIS_ALMA_DS71174288370001471').to_hash(:convert_tags_to => lambda { |tag| tag.snakecase.to_sym })
-      check_container(record, result[:record])
+      result = subject.get_marc('32LIBIS_ALMA_DS71174288370001471')
+      if result.is_a?(Libis::Tools::XmlDocument)
+        result = result.to_hash(:convert_tags_to => lambda { |tag| tag.snakecase.to_sym })
+        check_container(record, result[:record])
+      end
     end
 
   end
@@ -354,8 +357,11 @@ describe 'Primo Limo service' do
     }
 
     it 'get record' do
-      result = subject.get_pnx('32LIBIS_ALMA_DS71174288370001471').to_hash(:convert_tags_to => lambda { |tag| tag.snakecase.to_sym })
-      check_container(record, result[:record])
+      result = subject.get_pnx('32LIBIS_ALMA_DS71174288370001471')
+      if result.is_a?(Libis::Tools::XmlDocument)
+        result = result.to_hash(:convert_tags_to => lambda { |tag| tag.snakecase.to_sym })
+        check_container(record, result[:record])
+      end
     end
 
   end

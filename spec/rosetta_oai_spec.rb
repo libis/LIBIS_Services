@@ -19,15 +19,15 @@ describe 'Rosetta OAI-PMH Service' do
 
   let(:expected_collections) {
     [
-        'My pictures',
-        'Test Collection',
+        'Kerk & Leven',
+        'Kerk en leven. Bisdom Antwerpen (0991).',
     ]
   }
 
   let(:expected_records) {
     [
         {
-            id: 'oai:d4I1-pubam:IE403595',
+            id: 'oai:d4I1-pubam:IE405650',
         }
     ]
   }

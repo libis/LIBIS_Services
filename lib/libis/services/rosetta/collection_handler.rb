@@ -34,7 +34,7 @@ module Libis
         end
 
         def update(collection_info)
-          collection_info = collection_info.attributes if collection_info.is_a? CollectionInfo
+          collection_info = collection_info.to_hash.cleanup if collection_info.is_a? CollectionInfo
           call :update_collection, pds_handle: @pds_handle, collection: collection_info
         end
 

@@ -140,13 +140,27 @@ describe 'Rosetta Collection Service' do
     }
 
     let(:updated_name) { 'Stupid text' }
+    let(:updated_metadata) {
+      <<-STR.unindent.strip
+      <?xml version="1.0" encoding="UTF-8"?>
+        <dc:record xmlns:dc="http://purl.org/dc/elements/1.1/"
+                   xmlns:dcterms="http://purl.org/dc/terms/"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        <dc:title>Updated DC title</dc:title>
+        <dc:author>Autotest</dc:author>
+        <dcterms:created>2015-06-25 10:00</dcterms:created>
+      </dc:record>
+      STR
+    }
 
     let(:updated_collection) { collection_service.find(parent_name + '/' + updated_name) }
 
     let(:updated_collection_data) {
       updated_collection_data = new_collection_data.dup
       updated_collection_data[:name] = updated_name
-      updated_collection_data
+      # updated_collection_data[:md_dc].delete :mid
+      updated_collection_data[:md_dc][:content] = updated_metadata
+      updated_collection_data.cleanup
     }
 
 

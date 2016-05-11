@@ -15,7 +15,7 @@ module Libis
         end
 
         def get_marc(alma_id)
-          result = get 'primo_library/libweb/jqprimo/helpers/record_helper.jsp', id: "#{alma_id}.xml"
+          result = get "primo_library/libweb/jqp/record/#{alma_id}.xml"
           return result if result.is_a?(Libis::Tools::XmlDocument)
 
           raise Libis::Services::ServiceError, "#{result[:error_type]} - #{result[:error_name]}" if result[:error_type]
@@ -23,7 +23,7 @@ module Libis
         end
 
         def get_pnx(alma_id)
-          result = get 'primo_library/libweb/jqprimo/helpers/record_helper.jsp', id: "#{alma_id}.pnx"
+          result = get "primo_library/libweb/jqp/record/#{alma_id}.pnx"
           return result if result.is_a?(Libis::Tools::XmlDocument)
 
           raise Libis::Services::ServiceError, "#{result[:error_type]} - #{result[:error_name]}" if result[:error_type]
@@ -33,7 +33,7 @@ module Libis
         protected
 
         def result_parser(response)
-          Libis::Tools::XmlDocument.parse(response)
+          Libis::Tools::XmlDocument.parse(response) rescue response
         end
       end
     end

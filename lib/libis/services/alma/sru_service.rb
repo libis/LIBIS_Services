@@ -38,7 +38,7 @@ module Libis
         protected
 
         def result_parser(response)
-          Libis::Tools::XmlDocument.parse(response)
+          Libis::Tools::XmlDocument.parse(response) rescue response
         end
 
       end

@@ -8,14 +8,14 @@ describe 'Alma' do
 
   let(:record) {
     {
-        leader: '01206nas  2200337u  4500',
+        leader: '01205nas a2200337u  4500',
         controlfield: ['9930800070101471', '20151015113543.0', '881205c19679999be  r|p||     0|||a|dut c'],
         datafield: [
             {
                 subfield: '(BeLVLBS)003080007LBS01-Aleph',
                 :@tag => '035', :@ind1 => ' ', :@ind2 => ' '
             }, {
-                subfield: 'Kerk en leven. Bisdom Antwerpen (0991).',
+                subfield: 'Kerk en leven. Bisdom Antwerpen (0991)',
                 :@tag => '245', :@ind1 => '0', :@ind2 => '0'
             }, {
                 subfield: 'K & L',

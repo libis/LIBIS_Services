@@ -15,16 +15,24 @@ module Libis
         end
 
         def search(field, value, library = '32KUL_LIBIS_NETWORK')
+
           result = get library, version: '1.2', operation: 'searchRetrieve', recordSchema: 'marcxml',
                        query: "#{field}=#{value}"
 
-          unless result['//diag:diagnostic'].blank?
-            raise Libis::Services::ServiceError, "#{result['/searchRetrieveResponse/diag:diagnostic/diag:message']}"
+          if result.is_a?(Libis::Tools::XmlDocument)
+
+            unless result['//diag:diagnostic'].blank?
+              raise Libis::Services::ServiceError, "#{result['/searchRetrieveResponse/diag:diagnostic/diag:message']}"
+            end
+
+            return result.xpath('//record').map do |record|
+              Libis::Tools::XmlDocument.parse(record.to_s)
+            end
           end
 
-          result.xpath('//record').map do |record|
-            Libis::Tools::XmlDocument.parse(record.to_s)
-          end
+          raise Libis::Services::ServiceError, "#{result[:error_type]} - #{result[:error_name]}" if result[:error_type]
+          raise Libis::Services::ServiceError, "Unexpected reply: '#{result.to_s}' (#{result.class})"
+
         end
 
         protected

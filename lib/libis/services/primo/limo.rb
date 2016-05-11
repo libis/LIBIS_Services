@@ -15,11 +15,19 @@ module Libis
         end
 
         def get_marc(alma_id)
-          get 'primo_library/libweb/jqprimo/helpers/record_helper.jsp', id: "#{alma_id}.xml"
+          result = get 'primo_library/libweb/jqprimo/helpers/record_helper.jsp', id: "#{alma_id}.xml"
+          return result if result.is_a?(Libis::Tools::XmlDocument)
+
+          raise Libis::Services::ServiceError, "#{result[:error_type]} - #{result[:error_name]}" if result[:error_type]
+          raise Libis::Services::ServiceError, "Unexpected reply: '#{result.to_s}' (#{result.class})"
         end
 
         def get_pnx(alma_id)
-          get 'primo_library/libweb/jqprimo/helpers/record_helper.jsp', id: "#{alma_id}.pnx"
+          result = get 'primo_library/libweb/jqprimo/helpers/record_helper.jsp', id: "#{alma_id}.pnx"
+          return result if result.is_a?(Libis::Tools::XmlDocument)
+
+          raise Libis::Services::ServiceError, "#{result[:error_type]} - #{result[:error_name]}" if result[:error_type]
+          raise Libis::Services::ServiceError, "Unexpected reply: '#{result.to_s}' (#{result.class})"
         end
 
         protected

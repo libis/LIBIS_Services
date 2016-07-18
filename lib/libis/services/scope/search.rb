@@ -1,5 +1,4 @@
-# coding: utf-8
-
+require 'libis/services/generic_search'
 require 'libis/services/oracle_client'
 require 'libis/tools/xml_document'
 
@@ -10,24 +9,39 @@ module Libis
       class Search
         include ::Libis::Services::GenericSearch
 
+        attr_reader :oracle
+
         def initialize
           @doc = nil
         end
 
+        def connect(name, password)
+          @oracle = OracleClient.new(
+              'libis-db-scope.cc.kuleuven.be:1556/SCOPEP.kuleuven.be',
+              name, password
+          )
+        end
+
         def find(term, options = {})
           super
-          OracleClient.new('SCOPE01', 'APLKN_ARCHV_LIAS', 'archvsc').
-              call('kul_packages.scope_xml_meta_file_ed', [term.upcase])
-          err_file = "/nas/vol03/oracle/scope01/#{term}_err.XML"
+        end
+
+        def query(term, _options = {})
+          @oracle.call('kul_packages.scope_xml_meta_file_ed', [term.upcase])
+          term = term.gsub(/[-\/]/, '_')
+          err_file = "/nas/vol03/oracle/SCOPEP/#{term}_err.XML"
+          md_file = "/nas/vol03/oracle/SCOPEP/#{term}_md.XML"
           if File.exist? err_file
-            doc = XmlDocument.open(err_file)
-            msg = doc.xpath('/error/error_msg').first.content
-            msg_detail = doc.xpath('/error/error_').first.content
-            File.delete(err_file)
+            doc = Libis::Tools::XmlDocument.open(err_file)
+            msg = doc['/error/error_msg']
+            detail = doc['/error/error_']
+            File.delete(err_file) rescue nil
             @doc = nil
-            raise RuntimeError, "Scope search failed: '#{msg}'. Details: '#{msg_detail}'"
+            raise RuntimeError, "Scope search failed: '#{msg}'. Details: '#{detail}'"
+          elsif File.exist? md_file
+            @doc = Libis::Tools::XmlDocument.open(md_file)
           else
-            @doc = XmlDocument.open("/nas/vol03/oracle/scope01/#{term}_md.XML").to_hash
+            raise RuntimeError, 'Scope search did not generate expected result file.'
           end
         end
 

@@ -37,6 +37,10 @@ module Libis
 
         return yield(response) if block_given?
         parse_result(response, parse_options)
+
+      rescue Exception => e
+        unless (tries ||= -1; tries += 1) > 2; sleep(5 ** tries); retry; end
+        raise Libis::Services::ServiceError, "Persistent network error: #{e.class.name} '#{e.message}'"
       end
 
       protected

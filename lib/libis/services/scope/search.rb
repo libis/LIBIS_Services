@@ -40,6 +40,8 @@ module Libis
             raise RuntimeError, "Scope search failed: '#{msg}'. Details: '#{detail}'"
           elsif File.exist? md_file
             @doc = Libis::Tools::XmlDocument.open(md_file)
+            File.delete(md_file) rescue nil
+            @doc
           else
             raise RuntimeError, 'Scope search did not generate expected result file.'
           end

@@ -38,9 +38,14 @@ module Libis
         return yield(response) if block_given?
         parse_result(response, parse_options)
 
-      rescue Exception => e
-        unless (tries ||= -1; tries += 1) > 2; sleep(5 ** tries); retry; end
+      rescue IOError, EOFError, Errno::ECONNRESET, Errno::ECONNABORTED, Errno::EPIPE => e
+        debug "Exception: #{e.class.name} '#{e.message}'"
+        unless (tries ||= 0) > 2; sleep(5 ** tries); tries += 1; retry; end
         raise Libis::Services::ServiceError, "Persistent network error: #{e.class.name} '#{e.message}'"
+      rescue Net::ReadTimeout, Timeout::Error => e
+        debug "Exception: #{e.class.name} '#{e.message}'"
+        unless (tries ||= 0) > 1; sleep(5 ** tries); tries += 1; retry; end
+        raise Libis::Services::ServiceError, "Network timeout error: #{e.class.name} '#{e.message}'"
       end
 
       protected

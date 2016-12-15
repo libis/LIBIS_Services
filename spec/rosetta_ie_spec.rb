@@ -41,6 +41,7 @@ describe 'Rosetta IE Service' do
 
     mets = ie_handler.get_mets('IE403595')
     expect(mets).not_to be_nil
+    ap mets
     check_container expected_mets, mets
   end
 

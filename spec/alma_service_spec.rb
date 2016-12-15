@@ -6,10 +6,11 @@ require 'libis/services/alma/sru_service'
 
 describe 'Alma' do
 
+  # noinspection RubyLiteralArrayInspection
   let(:record) {
     {
-        leader: '01205nas a2200337u  4500',
-        controlfield: ['9930800070101471', '20151015113543.0', '881205c19679999be  r|p||     0|||a|dut c'],
+        leader: '01960nas a2200553u  4500',
+        controlfield: ['9930800070101471', '20160801110041.0', '881205c19679999be  r|p||     0|||a|dut c'],
         datafield: [
             {
                 subfield: '(BeLVLBS)003080007LBS01-Aleph',
@@ -42,12 +43,6 @@ describe 'Alma' do
                 subfield: 'Digitale kopie van de gedrukte uitgave',
                 :@tag => '500', :@ind1 => ' ', :@ind2 => ' '
             }, {
-                subfield: 'E-journals',
-                :@tag => '653', :@ind1 => ' ', :@ind2 => '6'
-            }, {
-                subfield: 'Collectie Kerk en Leven',
-                :@tag => '699', :@ind1 => ' ', :@ind2 => ' '
-            }, {
                 subfield: ['KADOC', 'C1', 'Kerken en religie', '(ODIS-HT)'],
                 :@tag => '650', :@ind1 => ' ', :@ind2 => '7'
             }, {
@@ -60,8 +55,68 @@ describe 'Alma' do
                 subfield: ['KADOC', 'Studiecentrum voor Zielzorg en Predicatie', '(ODIS-ORG)24894'],
                 :@tag => '650', :@ind1 => ' ', :@ind2 => '7'
             }, {
+                subfield: 'E-journals',
+                :@tag => '653', :@ind1 => ' ', :@ind2 => '6'
+            }, {
+                subfield: 'Collectie Kerk en Leven',
+                :@tag => '699', :@ind1 => ' ', :@ind2 => ' '
+            }, {
                 subfield: 'KYE000486',
                 :@tag => '983', :@ind1 => ' ', :@ind2 => ' '
+            }, {
+                subfield: ['EKAD', '(1967)7-35, 37-52'],
+                :@tag => '993', :@ind1 => ' ', :@ind2 => ' '
+            }, {
+                subfield: ['EKAD', '(1968)1-14, 17-49'],
+                :@tag => '993', :@ind1 => ' ', :@ind2 => ' '
+            }, {
+                subfield: ['EKAD', '(1969)1-10, 12-37, 39-49'],
+                :@tag => '993', :@ind1 => ' ', :@ind2 => ' '
+            }, {
+                subfield: ['EKAD', '(1970)1-50 volledig'],
+                :@tag => '993', :@ind1 => ' ', :@ind2 => ' '
+            }, {
+                subfield: ['EKAD', '(1971)1-28, 30-31, 33-37, 41-49'],
+                :@tag => '993', :@ind1 => ' ', :@ind2 => ' '
+            }, {
+                subfield: ['EKAD', '(1972)22, 30-32, 34-36, 38-50'],
+                :@tag => '993', :@ind1 => ' ', :@ind2 => ' '
+            }, {
+                subfield: ['EKAD', '(1973)1-50 volledig'],
+                :@tag => '993', :@ind1 => ' ', :@ind2 => ' '
+            }, {
+                subfield: ['EKAD', '(1974)1-25, 27-50'],
+                :@tag => '993', :@ind1 => ' ', :@ind2 => ' '
+            }, {
+                subfield: ['EKAD', '(1975)-(1992)volledig'],
+                :@tag => '993', :@ind1 => ' ', :@ind2 => ' '
+            }, {
+                subfield: ['EKAD', '(1993)1-10, 12-50'],
+                :@tag => '993', :@ind1 => ' ', :@ind2 => ' '
+            }, {
+                subfield: ['EKAD', '(1994)-(1996)volledig'],
+                :@tag => '993', :@ind1 => ' ', :@ind2 => ' '
+            }, {
+                subfield: ['EKAD', '(1997)volledig'],
+                :@tag => '993', :@ind1 => ' ', :@ind2 => ' '
+            }, {
+                subfield: ['EKAD', '(1998)1-53'],
+                :@tag => '993', :@ind1 => ' ', :@ind2 => ' '
+            }, {
+                subfield: ['EKAD', '(2000)1-16, 18-52'],
+                :@tag => '993', :@ind1 => ' ', :@ind2 => ' '
+            }, {
+                subfield: ['EKAD', '(2001)-(2003)volledig'],
+                :@tag => '993', :@ind1 => ' ', :@ind2 => ' '
+            }, {
+                subfield: ['EKAD', '(2004)1-53'],
+                :@tag => '993', :@ind1 => ' ', :@ind2 => ' '
+            }, {
+                subfield: ['EKAD', '(2005)1-8, 10-52'],
+                :@tag => '993', :@ind1 => ' ', :@ind2 => ' '
+            }, {
+                subfield: ['EKAD', '(2006)1-26, 29, 32-52'],
+                :@tag => '993', :@ind1 => ' ', :@ind2 => ' '
             }, {
                 subfield: ['EKAD', '(2007)39-42, 44, 46-49, 51-52'],
                 :@tag => '993', :@ind1 => ' ', :@ind2 => ' '
@@ -97,7 +152,7 @@ describe 'Alma' do
             :@tag => '035', :@ind1 => ' ', :@ind2 => ' '
         })
         record[:datafield] << {
-            subfield: ['KADOC', 'online', '201510', 'W', 'Collectie Kerk en Leven', 'local'],
+            subfield: ['KADOC', 'online', '201609', 'W', 'Collectie Kerk en Leven', 'local'],
             :@tag => '996', :@ind1 => ' ', :@ind2 => ' '
         }
       }
@@ -105,6 +160,7 @@ describe 'Alma' do
       it 'get record' do
         result = subject.get_marc('9930800070101480', 'l7xx8879c82a7d7b453a887a6e6dca8300fd').
             to_hash(:convert_tags_to => lambda { |tag| tag.snakecase.to_sym })
+        puts result
         check_container(record, result[:bib][:record])
       end
 

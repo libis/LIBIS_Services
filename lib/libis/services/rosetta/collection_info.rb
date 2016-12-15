@@ -22,11 +22,13 @@ module Libis
         attribute :id, String
         attribute :name, String
         attribute :parent_id, String
+        attribute :collection_order, Integer
         attribute :description, String
         attribute :md_dc, MetaData
         attribute :md_source, Array[MetaData]
         attribute :navigate, Boolean
         attribute :publish, Boolean
+        attribute :thumbnail, String
         attribute :external_id, String
         attribute :external_system, String
 

@@ -110,6 +110,7 @@ describe 'Rosetta Collection Service' do
     let(:collection_data) { {
         name: 'My new test collection',
         parent_id: parent_id,
+        collection_order: 0,
         md_dc: {
             type: 'descriptive',
             sub_type: 'dc',
@@ -172,6 +173,8 @@ describe 'Rosetta Collection Service' do
     end
 
     it 'retrieve new collection' do
+      puts new_collection.to_hash
+      puts new_collection_data
       expect(new_collection.to_hash).to match_collection(new_collection_data)
     end
 

@@ -1,42 +1,22 @@
-require 'oci8'
-
 module Libis
   module Services
 
     class OracleClient
 
-      attr_reader :oci
-
       def initialize(database, user, password)
         @database = database
         @user = user
         @password = password
-        @oci = OCI8.new(user, password, database)
-        ObjectSpace.define_finalizer( self, self.class.finalize(@oci) )
-      end
-
-      def self.finalize(oci)
-        proc { oci.logoff }
-      end
-
-      # @param [Boolean] value
-      def blocking=(value)
-        oci.non_blocking = !value
-        blocking?
-      end
-
-      def blocking?
-        !oci.non_blocking?
       end
 
       def call(procedure, parameters = [])
         params = ''
         params = "'" + parameters.join("','") + "'" if parameters and parameters.size > 0
-        oci.exec("call #{procedure}(#{params})")
+        system "echo \"call #{procedure}(#{params});\" | sqlplus -S #{@user}/#{@password}@#{@database}"
       end
 
-      def execute(statement, *bindvars, &block)
-        oci.exec(statement, *bindvars, &block)
+      def execute(sql)
+        process_result `echo "#{sql}" | sqlplus -S #{@user}/#{@password}@#{@database}`
       end
 
       def run(script, parameters = [])

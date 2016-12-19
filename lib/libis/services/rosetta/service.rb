@@ -13,6 +13,8 @@ require 'write_xlsx'
 require 'backports'
 require 'awesome_print'
 
+require_relative '../service_error'
+
 module Libis
   module Services
     module Rosetta
@@ -38,7 +40,13 @@ module Libis
         # @param [String] institute
         # @return [String] PDS handle
         def login(name, passwd, institute)
-          handle = @pds_service.login(name, passwd, institute)
+          handle = nil
+          0.upto(3).each do |i|
+            handle = @pds_service.login(name, passwd, institute)
+            break if handle
+            sleep(3 ** i)
+          end
+          raise ServiceError, 'Could not login into Rosetta.' unless handle
           @producer_service.pds_handle = handle
           @deposit_service.pds_handle = handle
           @sip_service.pds_handle = handle

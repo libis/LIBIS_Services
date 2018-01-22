@@ -1,6 +1,8 @@
 # coding: utf-8
 
 require 'awesome_print'
+require 'httpclient'
+require 'base64'
 
 require 'libis/tools/extend/hash'
 require 'libis/tools/config'
@@ -26,6 +28,10 @@ module Libis
           @pds_handle = handle
         end
 
+        def authenticate(user, password, institution)
+          @basic_auth = Base64.encode64 "#{user}-institutionCode-#{institution}:#{password}"
+        end
+
         def get_heart_bit
           request :get_heart_bit
         end
@@ -33,7 +39,11 @@ module Libis
         protected
 
         def call_raw(operation, args = {})
-          data = request operation.to_s.to_sym, args
+          data = if @basic_auth
+                   request operation.to_s.to_sym, args, headers: ['Authenticate', @basic_auth]
+                 else
+                   request operation.to_s.to_sym, args
+                 end
 
           # remove wrapper
           data = data["#{operation}_response".to_sym]

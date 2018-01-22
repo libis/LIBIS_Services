@@ -14,7 +14,9 @@ describe 'Rosetta OAI-PMH Service' do
   end
 
   let(:expected_sets) {
-    {name:'TESTINS-collections', spec: 'TESTINS-collections'}
+    [
+        {name:'TESTINS-collections', spec: 'TESTINS-collections'}
+    ]
   }
 
   let(:expected_collections) {
@@ -34,19 +36,19 @@ describe 'Rosetta OAI-PMH Service' do
 
   it 'should get set list' do
     sets = oai_handler.sets
-    expect(sets).to include(expected_sets)
+    expect(sets[:entries]).to deep_include(expected_sets)
   end
 
   it 'should get list of collections' do
     status = {}
     collections = oai_handler.collections('TESTINS', status)
-    check_container expected_collections, collections
+    expect(collections).to deep_include(expected_collections)
   end
 
   it 'should get list of records' do
     status = {}
     records = oai_handler.records('test_data', status)
-    check_container(expected_records, records)
+    expect(records).to deep_include(expected_records)
   end
 
 end

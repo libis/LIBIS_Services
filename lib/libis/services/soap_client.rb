@@ -19,6 +19,8 @@ module Libis
             soap_version: 1,
             filters: [:password],
             pretty_print_xml: true,
+            read_timeout: 30,
+            open_timeout: 5,
         }.merge options
 
         @client = Savon.client(opts) { yield if block_given? }

@@ -6,6 +6,8 @@ require 'libis-tools'
 describe 'Primo search service' do
   let(:subject) { Libis::Services::Primo::Search.new }
 
+  # Disabled as Primo services no longer work as expected
+  #
   # context 'query' do
   #
   #   it 'default return result' do

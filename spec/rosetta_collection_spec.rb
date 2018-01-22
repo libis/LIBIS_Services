@@ -108,7 +108,7 @@ describe 'Rosetta Collection Service' do
   context 'collections CRUD' do
 
     let(:collection_data) { {
-        name: 'My new test collection',
+        name: 'New test collection',
         parent_id: parent_id,
         collection_order: 0,
         md_dc: {
@@ -127,7 +127,7 @@ describe 'Rosetta Collection Service' do
         md_source: [],
         navigate: true,
         publish: false,
-        external_id: '12345',
+        external_id: '54321',
         external_system: 'Scope'
     } }
 

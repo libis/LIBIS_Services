@@ -6,6 +6,8 @@ require 'libis/services/primo/limo'
 describe 'Primo Limo service' do
   let(:subject) { Libis::Services::Primo::Limo.new }
 
+  # Disabled as Primo services no longer work as expected
+  #
   # context 'marc' do
   #
   #   let(:record) {
@@ -117,12 +119,13 @@ describe 'Primo Limo service' do
   #     result = subject.get_marc('32LIBIS_ALMA_DS71174288370001471')
   #     if result.is_a?(Libis::Tools::XmlDocument)
   #       result = result.to_hash(:convert_tags_to => lambda { |tag| tag.snakecase.to_sym })
-  #       check_container(record, result[:record])
+  #       expect(result[:record]).to deep_include(record)
+  #       # check_container(record, result[:record])
   #     end
   #   end
   #
   # end
-
+  #
   # context 'pnx' do
   #
   #   let(:record) {
@@ -360,7 +363,8 @@ describe 'Primo Limo service' do
   #     result = subject.get_pnx('32LIBIS_ALMA_DS71174288370001471')
   #     if result.is_a?(Libis::Tools::XmlDocument)
   #       result = result.to_hash(:convert_tags_to => lambda { |tag| tag.snakecase.to_sym })
-  #       check_container(record, result[:record])
+  #       expect(result[:record]).to deep_include(record)
+  #       # check_container(record, result[:record])
   #     end
   #   end
   #

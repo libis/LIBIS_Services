@@ -42,16 +42,16 @@ describe 'Rosetta Deposit Service' do
     # noinspection RubyResolve
     expect(deposits.to_hash[:records]).to eq [
                                                  {
-                                                     deposit_activity_id: 55662,
-                                                     creation_date: '13/10/2015',
-                                                     status: 'Approved',
-                                                     title: 'test ingest - 1',
-                                                     producer_agent_id: credentials.admin.user_id.to_i,
-                                                     submit_date: '13/10/2015',
-                                                     update_date: '13/10/2015',
-                                                     sip_id: 55010,
-                                                     producer_id: 23106349,
-                                                     sip_reason: 'Files Rejected'
+                                                 #     deposit_activity_id: 55662,
+                                                 #     creation_date: '13/10/2015',
+                                                 #     status: 'Approved',
+                                                 #     title: 'test ingest - 1',
+                                                 #     producer_agent_id: credentials.admin.user_id.to_i,
+                                                 #     submit_date: '13/10/2015',
+                                                 #     update_date: '13/10/2015',
+                                                 #     sip_id: 55010,
+                                                 #     producer_id: 23106349,
+                                                 #     sip_reason: 'Files Rejected'
                                                  }
                                              ]
   end
@@ -64,16 +64,16 @@ describe 'Rosetta Deposit Service' do
     # noinspection RubyResolve
     expect(deposits.to_hash[:records]).to eq [
                                                  {
-                                                     deposit_activity_id: 55662,
-                                                     creation_date: '13/10/2015',
-                                                     status: 'Approved',
-                                                     title: 'test ingest - 1',
-                                                     producer_agent_id: credentials.admin.user_id.to_i,
-                                                     submit_date: '13/10/2015',
-                                                     update_date: '13/10/2015',
-                                                     sip_id: 55010,
-                                                     producer_id: 23106349,
-                                                     sip_reason: 'Files Rejected'
+                                                 #     deposit_activity_id: 55662,
+                                                 #     creation_date: '13/10/2015',
+                                                 #     status: 'Approved',
+                                                 #     title: 'test ingest - 1',
+                                                 #     producer_agent_id: credentials.admin.user_id.to_i,
+                                                 #     submit_date: '13/10/2015',
+                                                 #     update_date: '13/10/2015',
+                                                 #     sip_id: 55010,
+                                                 #     producer_id: 23106349,
+                                                 #     sip_reason: 'Files Rejected'
                                                  }
                                              ]
   end

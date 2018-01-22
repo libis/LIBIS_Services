@@ -26,8 +26,16 @@ module Libis
           super
         end
 
-        def query(term, _options = {})
-          @oracle.call('kul_packages.scope_xml_meta_file_ed', [term.upcase])
+        def query(term, options = {})
+
+          case options[:type] || 'REPCODE'
+            when 'REPCODE'
+              @oracle.call('kul_packages.scope_xml_meta_file_ed', [term.upcase])
+            when 'ID'
+              @oracle.call('kul_packages.scope_xml_meta_file_by_id', term.to_i)
+            else
+              raise RuntimeError, "Invalid Scope search type '#{options[:type]}'"
+          end
           term = term.gsub(/[-\/]/, '_')
           err_file = "/nas/vol03/oracle/SCOPEP/#{term}_err.XML"
           md_file = "/nas/vol03/oracle/SCOPEP/#{term}_md.XML"

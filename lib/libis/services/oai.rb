@@ -72,7 +72,7 @@ module Libis
             end
           when REXML::Element
             obj.to_s
-          when OAI::Response, OAI::Header, OAI::Record, OAI::MetadataFormat
+          when OAI::Response, OAI::Header, OAI::Record, OAI::MetadataFormat, OAI::Set
             result = obj.instance_variables.map do |x|
               x[1..-1].to_sym
             end.select do |x|

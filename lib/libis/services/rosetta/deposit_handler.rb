@@ -176,7 +176,7 @@ module Libis
         def request_activities(method, args = {})
           data = call method, args
           list = Rosetta::DepositActivityList.new(total_records: data[:total_records])
-          records = data[:records][:record]
+          records = data[:records][:record] rescue nil
           list.records = (records.is_a?(Array) ? records : [records]).map { |record| Rosetta::DepositActivity.new(record)}
           list
         end

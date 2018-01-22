@@ -38,4 +38,5 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency 'virtus', '~> 1.0'
   spec.add_runtime_dependency 'write_xlsx', '~> 0.83'
   spec.add_runtime_dependency 'awesome_print', '~> 1.6'
+  spec.add_runtime_dependency 'httpclient', '~> 2.8'
 end

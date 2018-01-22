@@ -15,8 +15,6 @@ def expected_ies
                       "objectType" => "INTELLECTUAL_ENTITY",
                       "creationDate" => "2015-10-13 14:41:56",
                       "createdBy" => "testadmin",
-                      "modificationDate" => "2016-07-04 11:07:00",
-                      "modifiedBy" => "testadmin",
                       "owner" => "CRS00.TESTINS.TESTDEP",
                       "groupID" => "ABC123"
                   }
@@ -85,8 +83,6 @@ def expected_mets
                           "objectType" => "REPRESENTATION",
                           "creationDate" => "2015-10-31 11:23:13",
                           "createdBy" => "testadmin",
-                          "modificationDate" => "2015-10-31 11:43:10",
-                          "modifiedBy" => "testadmin",
                           "owner" => "CRS00.TESTINS.TESTDEP"
                       }
                   ],
@@ -105,11 +101,7 @@ def expected_mets
                       }
                   ]
               },
-              :rights => {
-                  "accessRightsPolicy" => [
-                      {"policyId" => "50740"}
-                  ]
-              }
+              :rights => {}
           },
           "Table of Contents" => {
               "Zonsondergang Sinebjerg" => {
@@ -122,8 +114,6 @@ def expected_mets
                                   "objectType" => "FILE",
                                   "creationDate" => "2015-10-31 11:23:13",
                                   "createdBy" => "testadmin",
-                                  "modificationDate" => "2015-10-31 11:43:10",
-                                  "modifiedBy" => "testadmin",
                                   "owner" => "CRS00.TESTINS.TESTDEP",
                                   "groupID" => "DSC03102"
                               }
@@ -159,8 +149,6 @@ def expected_mets
                                   "objectType" => "FILE",
                                   "creationDate" => "2015-10-31 11:23:13",
                                   "createdBy" => "testadmin",
-                                  "modificationDate" => "2015-10-31 11:23:13",
-                                  "modifiedBy" => "testadmin",
                                   "owner" => "CRS00.TESTINS.TESTDEP"
                               }
                           ],
@@ -183,8 +171,6 @@ def expected_mets
                                   "objectType" => "FILE",
                                   "creationDate" => "2015-10-31 11:23:13",
                                   "createdBy" => "testadmin",
-                                  "modificationDate" => "2015-10-31 11:23:13",
-                                  "modifiedBy" => "testadmin",
                                   "owner" => "CRS00.TESTINS.TESTDEP"
                               }
                           ],
@@ -206,8 +192,6 @@ def expected_mets
                                   "objectType" => "FILE",
                                   "creationDate" => "2015-10-31 11:23:13",
                                   "createdBy" => "testadmin",
-                                  "modificationDate" => "2015-10-31 11:23:13",
-                                  "modifiedBy" => "testadmin",
                                   "owner" => "CRS00.TESTINS.TESTDEP"
                               }
                           ],
@@ -228,8 +212,6 @@ def expected_mets
                                  [{"objectType" => "FILE",
                                    "creationDate" => "2015-10-31 11:23:13",
                                    "createdBy" => "testadmin",
-                                   "modificationDate" => "2015-10-31 11:23:13",
-                                   "modifiedBy" => "testadmin",
                                    "owner" => "CRS00.TESTINS.TESTDEP"}],
                              "internalIdentifier" =>
                                  [{"internalIdentifierType" => "PID",
@@ -245,8 +227,6 @@ def expected_mets
                                   "objectType" => "FILE",
                                   "creationDate" => "2015-10-31 11:23:13",
                                   "createdBy" => "testadmin",
-                                  "modificationDate" => "2015-10-31 11:23:13",
-                                  "modifiedBy" => "testadmin",
                                   "owner" => "CRS00.TESTINS.TESTDEP"
                               }
                           ],
@@ -270,8 +250,6 @@ def expected_mets
                           "objectType" => "REPRESENTATION",
                           "creationDate" => "2015-10-31 11:24:55",
                           "createdBy" => "testadmin",
-                          "modificationDate" => "2015-10-31 11:43:10",
-                          "modifiedBy" => "testadmin",
                           "owner" => "CRS00.TESTINS.TESTDEP"
                       }
                   ],
@@ -279,8 +257,7 @@ def expected_mets
                       {
                           "usageType" => "VIEW",
                           "preservationType" => "DERIVATIVE_COPY",
-                          "label" => "Small",
-                          "RepresentationCode" => "LOW"
+                          "label" => "Small"
                       }
                   ],
                   "internalIdentifier" => [
@@ -290,11 +267,7 @@ def expected_mets
                       }
                   ]
               },
-              :rights => {
-                  "accessRightsPolicy" => [
-                      {"policyId" => "AR_EVERYONE"}
-                  ]
-              },
+              :rights => {},
           },
           "Table of Contents" => {
               "Zonsondergang Sinebjerg" => {
@@ -307,8 +280,6 @@ def expected_mets
                                   "objectType" => "FILE",
                                   "creationDate" => "2015-10-31 11:24:55",
                                   "createdBy" => "testadmin",
-                                  "modificationDate" => "2015-10-31 11:43:10",
-                                  "modifiedBy" => "testadmin",
                                   "owner" => "CRS00.TESTINS.TESTDEP",
                                   "groupID" => "DSC03102"
                               }
@@ -331,8 +302,6 @@ def expected_mets
                                   "objectType" => "FILE",
                                   "creationDate" => "2015-10-31 11:24:55",
                                   "createdBy" => "testadmin",
-                                  "modificationDate" => "2015-10-31 11:24:55",
-                                  "modifiedBy" => "testadmin",
                                   "owner" => "CRS00.TESTINS.TESTDEP"
                               }
                           ],
@@ -354,8 +323,6 @@ def expected_mets
                                   "objectType" => "FILE",
                                   "creationDate" => "2015-10-31 11:24:55",
                                   "createdBy" => "testadmin",
-                                  "modificationDate" => "2015-10-31 11:24:55",
-                                  "modifiedBy" => "testadmin",
                                   "owner" => "CRS00.TESTINS.TESTDEP"
                               }
                           ],
@@ -377,8 +344,6 @@ def expected_mets
                                   "objectType" => "FILE",
                                   "creationDate" => "2015-10-31 11:24:55",
                                   "createdBy" => "testadmin",
-                                  "modificationDate" => "2015-10-31 11:24:55",
-                                  "modifiedBy" => "testadmin",
                                   "owner" => "CRS00.TESTINS.TESTDEP"
                               }
                           ],
@@ -400,8 +365,6 @@ def expected_mets
                                   "objectType" => "FILE",
                                   "creationDate" => "2015-10-31 11:24:55",
                                   "createdBy" => "testadmin",
-                                  "modificationDate" => "2015-10-31 11:24:55",
-                                  "modifiedBy" => "testadmin",
                                   "owner" => "CRS00.TESTINS.TESTDEP"
                               }
                           ],
@@ -423,8 +386,6 @@ def expected_mets
                                   "objectType" => "FILE",
                                   "creationDate" => "2015-10-31 11:24:55",
                                   "createdBy" => "testadmin",
-                                  "modificationDate" => "2015-10-31 11:24:55",
-                                  "modifiedBy" => "testadmin",
                                   "owner" => "CRS00.TESTINS.TESTDEP"
                               }
                           ],
@@ -473,8 +434,6 @@ def expected_mets
                           "objectType" => "REPRESENTATION",
                           "creationDate" => "2015-10-13 14:41:56",
                           "createdBy" => "testadmin",
-                          "modificationDate" => "2016-07-04 11:07:00",
-                          "modifiedBy" => "testadmin",
                           "owner" => "CRS00.TESTINS.TESTDEP",
                           "groupID" => "originals"
                       }
@@ -570,8 +529,6 @@ def expected_mets
                                   "objectType" => "FILE",
                                   "creationDate" => "2015-10-31 11:19:45",
                                   "createdBy" => "testadmin",
-                                  "modificationDate" => "2015-10-31 11:43:11",
-                                  "modifiedBy" => "testadmin",
                                   "owner" => "CRS00.TESTINS.TESTDEP",
                                   "groupID" => "DSC03102"
                               }
@@ -600,8 +557,6 @@ def expected_mets
                                   "objectType" => "FILE",
                                   "creationDate" => "2015-10-31 11:19:45",
                                   "createdBy" => "testadmin",
-                                  "modificationDate" => "2015-10-31 11:19:45",
-                                  "modifiedBy" => "testadmin",
                                   "owner" => "CRS00.TESTINS.TESTDEP"
                               }
                           ],
@@ -623,8 +578,6 @@ def expected_mets
                                   "objectType" => "FILE",
                                   "creationDate" => "2015-10-31 11:19:45",
                                   "createdBy" => "testadmin",
-                                  "modificationDate" => "2015-10-31 11:19:46",
-                                  "modifiedBy" => "testadmin",
                                   "owner" => "CRS00.TESTINS.TESTDEP"
                               }
                           ],
@@ -646,8 +599,6 @@ def expected_mets
                                   "objectType" => "FILE",
                                   "creationDate" => "2015-10-31 11:19:45",
                                   "createdBy" => "testadmin",
-                                  "modificationDate" => "2015-10-31 11:19:46",
-                                  "modifiedBy" => "testadmin",
                                   "owner" => "CRS00.TESTINS.TESTDEP"
                               }
                           ],
@@ -669,8 +620,6 @@ def expected_mets
                                   "objectType" => "FILE",
                                   "creationDate" => "2015-10-31 11:19:45",
                                   "createdBy" => "testadmin",
-                                  "modificationDate" => "2015-10-31 11:19:46",
-                                  "modifiedBy" => "testadmin",
                                   "owner" => "CRS00.TESTINS.TESTDEP"
                               }
                           ],
@@ -692,8 +641,6 @@ def expected_mets
                                   "objectType" => "FILE",
                                   "creationDate" => "2015-10-31 11:19:45",
                                   "createdBy" => "testadmin",
-                                  "modificationDate" => "2015-10-31 11:19:46",
-                                  "modifiedBy" => "testadmin",
                                   "owner" => "CRS00.TESTINS.TESTDEP"
                               }
                           ],

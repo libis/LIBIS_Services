@@ -12,7 +12,7 @@ module Libis
         @user = user
         @password = password
         @oci = OCI8.new(user, password, database)
-        ObjectSpace.define_finalizer( self, self.class.finalize(@oci) )
+        ObjectSpace.define_finalizer(self, self.class.finalize(@oci))
       end
 
       def self.finalize(oci)
@@ -37,6 +37,27 @@ module Libis
 
       def execute(statement, *bindvars, &block)
         oci.exec(statement, *bindvars, &block)
+      end
+
+      def table(name)
+        metadata = oci.describe_table(name)
+        {
+            columns: metadata.columns.map do |column|
+              {
+                  name: column.name,
+                  type: column.data_type,
+                  size: case column.data_type
+                          when :number
+                            column.precision
+                          when :varchar2
+                            column.char_size
+                          else
+                            column.data_size
+                        end,
+                  required: !column.nullable?
+              }
+            end
+        }
       end
 
       def run(script, parameters = [])

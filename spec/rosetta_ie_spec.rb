@@ -42,14 +42,16 @@ describe 'Rosetta IE Service' do
     mets = ie_handler.get_mets('IE403595')
     expect(mets).not_to be_nil
     ap mets
-    check_container expected_mets, mets
+    expect(mets).to deep_include(expected_mets)
+    # check_container expected_mets, mets
   end
 
   it 'should get IE metadata' do
 
     metadata = ie_handler.get_metadata('IE403595')
     expect(metadata).not_to be_nil
-    check_container(expected_ies, metadata)
+    expect(metadata).to deep_include(expected_ies)
+    # check_container(expected_ies, metadata)
   end
 
 end

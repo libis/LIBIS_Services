@@ -21,7 +21,8 @@ module Libis
         end
 
         def is_user?(user_id)
-          call :is_user_exists, arg0: @pds_handle, arg1: user_id
+          data = call :is_user_exists, arg0: @pds_handle, arg1: user_id
+          data == "User name #{user_id} already exists"
         end
 
         def producer(producer_id, producer_info = nil)

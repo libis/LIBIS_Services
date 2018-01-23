@@ -32,7 +32,7 @@ module Libis
             when 'REPCODE'
               @oracle.call('kul_packages.scope_xml_meta_file_ed', [term.upcase])
             when 'ID'
-              @oracle.call('kul_packages.scope_xml_meta_file_by_id', term.to_i)
+              @oracle.call('kul_packages.scope_xml_meta_file_by_id', [term.to_i])
             else
               raise RuntimeError, "Invalid Scope search type '#{options[:type]}'"
           end

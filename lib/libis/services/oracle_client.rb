@@ -31,7 +31,7 @@ module Libis
 
       def call(procedure, parameters = [])
         params = ''
-        params = "'" + parameters.join("','") + "'" if parameters and parameters.size > 0
+        params = "'" + parameters.map(&:to_s).join("','") + "'" if parameters and parameters.size > 0
         oci.exec("call #{procedure}(#{params})")
       end
 

@@ -10,19 +10,6 @@ require 'libis/services/rosetta/deposit_handler'
 describe 'Rosetta Deposit Service' do
 
   let(:credentials) { Libis::Tools::ConfigFile.new File.join(File.dirname(__FILE__), 'credentials-test.yml') }
-  let(:pds_handler) do
-    # noinspection RubyResolve
-    Libis::Services::Rosetta::PdsHandler.new(credentials.pds_url)
-  end
-
-  let(:handle) do
-    # noinspection RubyResolve
-    pds_handler.login(
-        credentials.admin.user,
-        credentials.admin.password,
-        credentials.admin.institute
-    )
-  end
 
   subject(:deposit_handler) do
     # noinspection RubyResolve
@@ -32,7 +19,8 @@ describe 'Rosetta Deposit Service' do
   end
 
   before :each do
-    deposit_handler.pds_handle = handle
+    # noinspection RubyResolve
+    deposit_handler.authenticate(credentials.admin.user, credentials.admin.password, credentials.admin.institute)
   end
 
   it 'should get list of deposits by date' do

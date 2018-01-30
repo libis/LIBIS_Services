@@ -17,8 +17,9 @@ module Libis
 
     autoload :SharepointConnector, 'libis/services/sharepoint_connector'
 
-    autoload :Rosetta, 'libis/services/rosetta'
     autoload :Primo, 'libis/services/primo'
 
   end
 end
+
+require_relative 'services/rosetta'

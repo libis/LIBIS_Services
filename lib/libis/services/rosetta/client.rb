@@ -19,6 +19,13 @@ module Libis
         include ::Libis::Tools::Logger
 
         def initialize(section, service, options = {})
+          basic_auth = options.delete(:basic_auth)
+          if basic_auth
+            options[:basic_auth] = [
+                "#{basic_auth[:user]}-institutionCode-#{basic_auth[:institution]}",
+                basic_auth[:password]
+            ]
+          end
           opts = {strip_namespaces: true, logger: ::Libis::Tools::Config.logger}.merge options
           base_url = opts.delete(:url) || 'http://depot.lias.be'
           configure "#{base_url}/dpsws/#{section}/#{service}?wsdl", opts
@@ -29,7 +36,8 @@ module Libis
         end
 
         def authenticate(user, password, institution)
-          @basic_auth = Base64.encode64 "#{user}-institutionCode-#{institution}:#{password}"
+          code = Base64.encode64("#{user}-institutionCode-#{institution}:#{password}").gsub("\n", '')
+          @auth = "Basic #{code}"
         end
 
         def get_heart_bit
@@ -39,8 +47,8 @@ module Libis
         protected
 
         def call_raw(operation, args = {})
-          data = if @basic_auth
-                   request operation.to_s.to_sym, args, headers: ['Authenticate', @basic_auth]
+          data = if @auth
+                   request operation.to_s.to_sym, args, headers: {'Authorization' => @auth}
                  else
                    request operation.to_s.to_sym, args
                  end
@@ -65,7 +73,7 @@ module Libis
                 empty_tag_value: nil,
                 delete_namespace_attributes: true,
                 strip_namespaces: true,
-                convert_tags_to: lambda { |tag| tag.to_sym }
+                convert_tags_to: lambda {|tag| tag.to_sym}
             )
             data = xml_data unless xml_data.empty?
           end
@@ -108,7 +116,7 @@ module Libis
 
         def request_object_array(method, klass, args = {})
           data = request_array(method, args)
-          data.map { |x| klass.new(x) }
+          data.map {|x| klass.new(x)}
         end
 
       end

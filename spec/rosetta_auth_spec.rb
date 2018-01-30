@@ -9,6 +9,19 @@ require 'libis/services/rosetta/producer_handler'
 
 describe 'Rosetta Services' do
 
+  def protected_call(handler, producer_id, producer_name)
+    result = handler.producer(producer_id)
+    expect(result.authoritative_name).to eq producer_name
+  end
+
+  def failed_protected_call(handler, producer_id)
+    expect {handler.producer(producer_id)}.to raise_error(Libis::Services::ServiceError, /^Incorrect username or password/)
+  end
+
+  def invalid_protected_call(handler, producer_id)
+    expect {handler.producer(producer_id)}.to raise_error(Libis::Services::ServiceError)
+  end
+
   let!(:credentials) {Libis::Tools::ConfigFile.new File.join(File.dirname(__FILE__), 'credentials-test.yml')}
 
   # noinspection RubyResolve
@@ -24,51 +37,61 @@ describe 'Rosetta Services' do
 
   let(:bad_cred) { 'deadbeaf' }
 
-  let(:handler) do
-    # noinspection RubyResolve
-    handler = Libis::Services::Rosetta::ProducerHandler.new(
-        credentials.rosetta_url,
-        log: credentials.debug,
-        log_level: credentials.debug_level
-    )
-    handler
-  end
-
   describe 'basic authentication' do
+
+    let(:handler) do
+      # noinspection RubyResolve
+      handler = Libis::Services::Rosetta::ProducerHandler.new(
+          credentials.rosetta_url,
+          # log: credentials.debug,
+          # log_level: credentials.debug_level
+      )
+      handler
+    end
 
     let(:user_name) {admin_usr}
     let(:user_id) {admin_uid}
+    let(:producer_id) {credentials.producer.id}
+    let(:producer_name) {credentials.producer.data.authoritative_name}
 
     it 'should allow protected call with correct login' do
       handler.authenticate(admin_usr, admin_pwd, admin_ins)
-      result = handler.user_id(user_name)
-      expect(result).to eq user_id
+      protected_call(handler, producer_id, producer_name)
     end
 
     it 'should fail protected call with wrong password' do
       handler.authenticate(admin_usr, bad_cred, admin_ins)
-      result = handler.user_id(user_name)
-      expect(result).to eq user_id
+      failed_protected_call(handler, producer_id)
     end
 
     it 'should fail protected call with wrong institution' do
       handler.authenticate(admin_usr, admin_pwd, bad_cred)
-      result = handler.user_id(user_name)
-      expect(result).to eq user_id
+      failed_protected_call(handler, producer_id)
     end
 
     it 'should fail protected call with wrong user name' do
       handler.authenticate(bad_cred, admin_pwd, admin_ins)
-      result = handler.user_id(user_name)
-      expect(result).to eq user_id
+      failed_protected_call(handler, producer_id)
     end
 
   end
 
   describe 'PDS authentication' do
 
+    let(:handler) do
+      # noinspection RubyResolve
+      handler = Libis::Services::Rosetta::ProducerHandler.new(
+          credentials.rosetta_url,
+          # log: credentials.debug,
+          # log_level: credentials.debug_level
+      )
+      handler
+    end
+
     let(:user_name) {admin_usr}
     let(:user_id) {admin_uid}
+    let(:producer_id) {credentials.producer.id}
+    let(:producer_name) {credentials.producer.data.authoritative_name}
 
     let!(:pds_handler) do
       # noinspection RubyResolve
@@ -92,8 +115,7 @@ describe 'Rosetta Services' do
 
       it 'should allow protected call' do
         handler.pds_handle = handle
-        result = handler.user_id(user_name)
-        expect(result).to eq user_id
+        protected_call(handler, producer_id, producer_name)
       end
 
       it 'should logout using a valid handle' do
@@ -111,8 +133,7 @@ describe 'Rosetta Services' do
 
       it 'should fail protected call' do
         handler.pds_handle = handle
-        result = handler.user_id(user_name)
-        expect(result).to eq user_id
+        invalid_protected_call(handler, producer_id)
       end
 
       it 'should logout using a invalid handle' do
@@ -130,8 +151,7 @@ describe 'Rosetta Services' do
 
       it 'should fail protected call' do
         handler.pds_handle = handle
-        result = handler.user_id(user_name)
-        expect(result).to eq user_id
+        invalid_protected_call(handler, producer_id)
       end
 
       it 'should logout using a invalid handle' do
@@ -150,8 +170,7 @@ describe 'Rosetta Services' do
 
       it 'should fail protected call' do
         handler.pds_handle = handle
-        result = handler.user_id(user_name)
-        expect(result).to eq user_id
+        invalid_protected_call(handler, producer_id)
       end
 
       it 'should logout using a invalid handle' do

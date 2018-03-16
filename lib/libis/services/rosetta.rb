@@ -1,7 +1,7 @@
 module Libis
   module Services
     module Rosetta
-      autoload :Service, 'lib/libis/services/rosetta/service'
+      autoload :Service, 'libis/services/rosetta/service'
 
       autoload :PdsHandler, 'libis/services/rosetta/pds_handler'
       autoload :ProducerHandler, 'libis/services/rosetta/producer_handler'

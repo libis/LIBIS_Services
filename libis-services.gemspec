@@ -32,7 +32,7 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency 'libis-tools', '~> 0.9'
   spec.add_runtime_dependency 'highline', '~> 1.7'
   spec.add_runtime_dependency 'savon', '~> 2.11'
-  spec.add_runtime_dependency 'rest-client', '~> 1.8'
+  spec.add_runtime_dependency 'rest-client', '~> 2.0'
   spec.add_runtime_dependency 'oai', '~> 0.4'
   spec.add_runtime_dependency 'ruby-oci8', '~> 2.2.2'
   spec.add_runtime_dependency 'virtus', '~> 1.0'

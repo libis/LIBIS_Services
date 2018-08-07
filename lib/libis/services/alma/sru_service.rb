@@ -25,7 +25,7 @@ module Libis
               raise Libis::Services::ServiceError, "#{result['/searchRetrieveResponse/diag:diagnostic/diag:message']}"
             end
 
-            return result.xpath('//record').map do |record|
+            return result.document.xpath('//marc:record', 'marc' => 'http://www.loc.gov/MARC21/slim').map do |record|
               Libis::Tools::XmlDocument.parse(record.to_s)
             end
           end

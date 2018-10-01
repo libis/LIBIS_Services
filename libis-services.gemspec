@@ -29,7 +29,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'coveralls', '~> 0.7'
   spec.add_development_dependency 'equivalent-xml', '~> 0.6'
 
-  spec.add_runtime_dependency 'libis-tools', '~> 0.9'
+  spec.add_runtime_dependency 'libis-tools', '~> 1.0'
   spec.add_runtime_dependency 'highline', '~> 1.7'
   spec.add_runtime_dependency 'savon', '~> 2.11'
   spec.add_runtime_dependency 'rest-client', '~> 2.0'

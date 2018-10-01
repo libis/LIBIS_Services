@@ -17,7 +17,7 @@ module Libis
 
         def connect(name, password, database = nil)
           database ||= 'libis-db-scope.cc.kuleuven.be:1556/SCOPEP.kuleuven.be'
-          @oracle = OracleClient.new(database,name, password)
+          @oracle = OracleClient.new(database, name, password)
         end
 
         def find(term, options = {})

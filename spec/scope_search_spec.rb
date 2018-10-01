@@ -9,7 +9,7 @@ describe 'Scope search service' do
   let(:subject) {
     scope = Libis::Services::Scope::Search.new
     # noinspection RubyResolve
-    scope.connect(credentials.scope_user, credentials.scope_passwd)
+    scope.connect(credentials.scope_user, credentials.scope_passwd, credentials.scope_db)
     scope
   }
 

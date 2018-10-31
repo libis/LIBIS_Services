@@ -5,13 +5,11 @@ module Libis
 
     class OracleClient
 
-      attr_reader :oci
+      attr_reader :url, :oci
 
-      def initialize(database, user, password)
-        @database = database
-        @user = user
-        @password = password
-        @oci = OCI8.new(user, password, database)
+      def initialize(url)
+        @url = url
+        @oci = OCI8.new(url)
         ObjectSpace.define_finalizer(self, self.class.finalize(@oci))
       end
 
@@ -63,7 +61,7 @@ module Libis
       def run(script, parameters = [])
         params = ''
         params = "\"" + parameters.join("\" \"") + "\"" if parameters and parameters.size > 0
-        process_result `sqlplus -S #{@user}/#{@password}@#{@database} @#{script} #{params}`
+        process_result `sqlplus -S #{url} @#{script} #{params}`
       end
 
       private

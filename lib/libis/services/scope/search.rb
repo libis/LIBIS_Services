@@ -17,7 +17,11 @@ module Libis
 
         def connect(name, password, database = nil)
           database ||= 'libis-db-scope.cc.kuleuven.be:1556/SCOPEP.kuleuven.be'
-          @oracle = OracleClient.new(database, name, password)
+          @oracle = OracleClient.new("#{name}/#{password}/#{database}")
+        end
+
+        def connect_url(url)
+          @oracle = OracleClient.new(url)
         end
 
         def find(term, options = {})
@@ -35,8 +39,8 @@ module Libis
               raise RuntimeError, "Invalid Scope search type '#{options[:type]}'"
           end
           term = term.gsub(/[-\/]/, '_')
-          err_file = "/nas/vol03/oracle/SCOPEP/#{term}_err.XML"
-          md_file = "/nas/vol03/oracle/SCOPEP/#{term}_md.XML"
+          err_file = "/nas/vol03/oracle/#{options[:dir] || 'SCOPEP'}/#{term}_err.XML"
+          md_file = "/nas/vol03/oracle/#{options[:dir] || 'SCOPEP'}/#{term}_md.XML"
           if File.exist? err_file
             doc = Libis::Tools::XmlDocument.open(err_file)
             msg = doc['/error/error_msg']

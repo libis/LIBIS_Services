@@ -14,7 +14,7 @@ module Libis
         end
 
         def connect
-          @oracle = OracleClient.new(@url, @user, @password)
+          @oracle = OracleClient.new("#{@user}/#{@password}@#{@url}")
         end
 
         def set_schema(schema)

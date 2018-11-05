@@ -18,10 +18,12 @@ module Libis
         def connect(name, password, database = nil)
           database ||= 'libis-db-scope.cc.kuleuven.be:1556/SCOPEP.kuleuven.be'
           @oracle = OracleClient.new("#{name}/#{password}/#{database}")
+          self
         end
 
         def connect_url(url)
           @oracle = OracleClient.new(url)
+          self
         end
 
         def find(term, options = {})

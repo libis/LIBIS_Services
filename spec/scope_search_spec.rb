@@ -18,12 +18,12 @@ describe 'Scope search service' do
     it 'by repcode' do
       data = {
           'dc:title' => 'Archief Sint-Vincentius a Paulogenootschap, Conferentie Onze-Lieve-Vrouw van de Rozenkrans Antwerpen',
-          'dc:identifier' => ['BE/942855/580(ref.code)'],
-          'dc:source' => ['BE/942855/580']
+          'dc:identifier' => ['BE/942855/580 (ref.code)'],
+          'dc:source' => ['BE/942855']
       }
       result = subject.query 'BE-942855-580', type: 'REPCODE'
       expect(result).to be_a(Libis::Tools::XmlDocument)
-      expect(result.to_hash['record']).to deep_include(data)
+      expect(result.to_hash['dc:record']).to deep_include(data)
     end
 
     it 'by id' do

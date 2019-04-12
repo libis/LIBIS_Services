@@ -19,6 +19,7 @@ module Libis
         include ::Libis::Tools::Logger
 
         def initialize(section, service, options = {})
+          @clear_soap_action = true
           basic_auth = options.delete(:basic_auth)
           if basic_auth
             options[:basic_auth] = [
@@ -46,16 +47,18 @@ module Libis
 
         protected
 
+        attr_reader :clear_soap_action
+
         def call_raw(operation, args = {})
-          data = if @auth
-                   request operation.to_s.to_sym, args, headers: {'Authorization' => @auth}
-                 else
-                   request operation.to_s.to_sym, args
-                 end
+          opts = {}
+          opts[:soap_action] = nil if clear_soap_action
+          opts[:headers] = {:Authorization => @auth} if @auth
+          data = request operation.to_s.to_sym, args, opts
 
           # remove wrapper
           data = data["#{operation}_response".to_sym]
-          data.delete(:'@xmlns:ns1')
+          data.delete_if {|key, _value| key.to_s =~ /^@/}
+          # data.delete(:'@xmlns:ns1')
 
           # drill down the returned Hash
           data = data.first.last while data.is_a?(Hash) && 1 == data.size

@@ -26,7 +26,8 @@ module Libis
 
         def create(collection_info)
           collection_info = collection_info.to_hash.cleanup if collection_info.is_a? CollectionInfo
-          call :create_collection, pds_handle: @pds_handle, collection: collection_info
+          result = call :create_collection, pds_handle: @pds_handle, collection: collection_info
+          result[:return]
         end
 
         def delete(id)

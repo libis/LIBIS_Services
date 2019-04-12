@@ -63,8 +63,13 @@ describe 'Rosetta Collection Service' do
     collection_service = Libis::Services::Rosetta::CollectionHandler.new credentials.rosetta_url,
                                                                          log: credentials.debug,
                                                                          log_level: credentials.debug_level
-    collection_service.pds_handle = handle
+    # collection_service.pds_handle = handle
     collection_service
+  end
+
+  before :each do
+    # noinspection RubyResolve
+    collection_service.authenticate(credentials.admin.user, credentials.admin.password, credentials.admin.institute)
   end
 
   context 'existing collections' do
@@ -108,7 +113,7 @@ describe 'Rosetta Collection Service' do
   context 'collections CRUD' do
 
     let(:collection_data) { {
-        name: 'New test collection',
+        name: 'Test API collection',
         parent_id: parent_id,
         collection_order: 0,
         md_dc: {
@@ -126,9 +131,7 @@ describe 'Rosetta Collection Service' do
         },
         md_source: [],
         navigate: true,
-        publish: false,
-        external_id: '54321',
-        external_system: 'Scope'
+        publish: false
     } }
 
     let(:new_collection) { collection_service.find(parent_name + '/' + collection_data[:name]) }
@@ -173,8 +176,8 @@ describe 'Rosetta Collection Service' do
     end
 
     it 'retrieve new collection' do
-      puts new_collection.to_hash
-      puts new_collection_data
+      # puts new_collection.to_hash
+      # puts new_collection_data
       expect(new_collection.to_hash).to match_collection(new_collection_data)
     end
 

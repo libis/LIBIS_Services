@@ -1,6 +1,7 @@
 # encoding: utf-8
 
 require 'libis/tools/xml_document'
+require 'libis/tools/mets_file'
 require_relative 'client'
 
 module Libis
@@ -15,12 +16,12 @@ module Libis
 
         def get_mets(ie, flags = 0)
           result = call_raw :get_ie, pds_handle: @pds_handle, ie_pid: ie, flags: flags
-          Libis::Tools::MetsFile.parse(result)
+          Libis::Tools::MetsFile.parse(result[:get_ie])
         end
 
         def get_metadata(ie)
           result = call_raw :get_md, pds_handle: @pds_handle, 'PID' => ie
-          Libis::Tools::MetsFile.parse(result)
+          Libis::Tools::MetsFile.parse(result[:get_md])
         end
 
       end

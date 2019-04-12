@@ -2,6 +2,7 @@
 require 'libis/tools/extend/hash'
 require 'libis/tools/xml_document'
 require_relative 'producer'
+require_relative 'producer_agent'
 require_relative 'user'
 
 require_relative 'client'
@@ -39,6 +40,7 @@ module Libis
         end
 
         def new_producer(producer_info)
+          # noinspection RubyArgCount
           producer_info = Rosetta::Producer.new(producer_info) unless producer_info.is_a?(Rosetta::Producer)
           call :create_producer, arg0: @pds_handle, arg1: producer_info.to_xml
         end
@@ -51,17 +53,18 @@ module Libis
           if agent_info
             info = agent(agent_id)
             return nil if info.nil?
-            (agent_info.is_a?(Rosetta::User) ? agent_info.attributes : agent_info).each do |name, value|
+            (agent_info.is_a?(Rosetta::ProducerAgent) ? agent_info.attributes : agent_info).each do |name, value|
               info[name] = value
             end
             call :update_producer_agent, arg0: @pds_handle, arg1: agent_id, arg2: info.to_xml
           else
-            request_object :get_producer_agent, Rosetta::User, arg0: @pds_handle, arg1: agent_id
+            request_object :get_producer_agent, Rosetta::ProducerAgent, arg0: @pds_handle, arg1: agent_id
           end
         end
 
         def new_agent(agent_info)
-          agent_info = Rosetta::User.new(agent_info) unless agent_info.is_a?(Rosetta::User)
+          # noinspection RubyArgCount
+          agent_info = Rosetta::ProducerAgent.new(agent_info) unless agent_info.is_a?(Rosetta::ProducerAgent)
           call :create_producer_agent, arg0: @pds_handle, arg1: agent_info.to_xml
         end
 
@@ -99,6 +102,7 @@ module Libis
         end
 
         def new_contact(contact_info)
+          # noinspection RubyArgCount
           contact_info = Rosetta::User.new(contact_info) unless contact_info.is_a?(Rosetta::User)
           call :create_contact, arg0: @pds_handle, arg1: contact_info.to_xml
         end
@@ -108,6 +112,7 @@ module Libis
         end
 
         def link_contact(contact_id, producer_id, primary = true)
+          # noinspection RubySimplifyBooleanInspection
           call :link_contact_to_producer, arg0: @pds_handle, arg1: producer_id, arg2: contact_id, arg3: (!!primary).to_s.upcase
         end
 

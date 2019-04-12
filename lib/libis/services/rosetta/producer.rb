@@ -61,8 +61,9 @@ module Libis
               strip_namespaces: true,
               delete_namespace_attributes: true,
               empty_tag_value: nil,
-              convert_tags_to: lambda { |tag| tag.to_sym }
+              convert_tags_to: lambda(&:to_sym)
           )
+          # noinspection RubyArgCount
           self.new(hash[:producer_info])
         end
       end

@@ -24,7 +24,7 @@ def expected_ies
                       "status" => "ACTIVE",
                       "submissionReason" => "Ingest",
                       "IEEntityType" => "KADOC_PhotoAlbum",
-                      "Version" => "100200300",
+                      "Version" => "13",
                       "UserDefinedA" => "AAAA",
                       "UserDefinedB" => "BBBB",
                       "UserDefinedC" => "CCCC"
@@ -65,7 +65,6 @@ def expected_ies
           }
       },
       :dmd => {
-          "text" => "\n        ",
           "title" => "Denemarken 2015"
       },
   }
@@ -542,7 +541,6 @@ def expected_mets
                       }
                   },
                   :dmd => {
-                      "text" => "\n        ",
                       "spatial" => "Sinebjerg",
                       "coverage" => "Denemarken 2015",
                       "subject" => "Jitse"

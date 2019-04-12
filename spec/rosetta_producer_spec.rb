@@ -1,6 +1,7 @@
 # encoding: utf-8
 require_relative 'spec_helper'
 require 'yaml'
+require 'awesome_print'
 
 require 'libis/tools/config_file'
 
@@ -43,8 +44,10 @@ describe 'Rosetta Producer Service' do
   end
 
   context 'user info' do
+    # noinspection RubyBlockToMethodReference
     let(:user_id) {admin_uid}
 
+    # noinspection RubyBlockToMethodReference
     let(:user_name) {admin_usr}
 
     it 'gets user id' do
@@ -69,6 +72,7 @@ describe 'Rosetta Producer Service' do
 
     let(:producer_id) {credentials.producer.id}
     let(:producer_data) {credentials.producer.data.to_hash}
+    # noinspection RubyArgCount
     let(:producer_info) {::Libis::Services::Rosetta::Producer.new(producer_data).to_hash}
     let(:updated_info) {{email: 'nomail@mail.com', telephone_2: '0032 16 32 22 22'}}
     let(:new_producer_info) {
@@ -86,6 +90,7 @@ describe 'Rosetta Producer Service' do
 
     it 'get producer' do
       result = producer_handler.producer(producer_id)
+      # ap result
       expect(result).not_to be_nil
       expect(result.to_hash).to match producer_data
       expect(producer_data).to match result.to_hash
@@ -136,19 +141,21 @@ describe 'Rosetta Producer Service' do
         email_address: 'test@mail.com',
         street: 'Willem de Croylaan 54',
         city: 'Heverlee',
-        zip: 3001,
+        zip: '3001',
         country: 'Belgium',
         telephone_1: '0032 16 32 22 66',
         user_group: 'producer_agents'
     }}
     let(:new_agent) {
       data = new_agent_data.dup
-      data[:password] = data[:password_verify] = 'abc123ABC'
-      Libis::Services::Rosetta::User.new(data).to_hash
+      # data[:password] = data[:password_verify] = 'abc123ABC'
+      # noinspection RubyArgCount
+      Libis::Services::Rosetta::ProducerAgent.new(data).to_hash
     }
 
     # noinspection RubyResolve
     let(:agent_data) {credentials.producer_agent.data.to_hash}
+    # noinspection RubyArgCount
     let(:agent) {::Libis::Services::Rosetta::User.new(agent_data)}
     # noinspection RubyResolve
     let(:agent_id) {credentials.producer_agent.user_id}
@@ -163,7 +170,9 @@ describe 'Rosetta Producer Service' do
     it 'get info' do
       result = producer_handler.agent(agent_id)
       expect(result).not_to be_nil
-      expect(result.to_hash).to include agent_data
+      # ap result.to_hash
+      # ap agent_data
+      expect(result.to_hash).to match agent_data
     end
 
     it 'create' do
@@ -176,7 +185,7 @@ describe 'Rosetta Producer Service' do
     it 'get info' do
       result = producer_handler.agent(new_agent_id)
       expect(result).not_to be_nil
-      expect(result.to_hash).to include new_agent_data
+      expect(result.to_hash).to match new_agent_data
     end
 
     it 'update info' do
@@ -205,6 +214,7 @@ describe 'Rosetta Producer Service' do
     it 'get producers' do
       result = producer_handler.agent_producers agent_id, agent_ins
       expect(result).not_to be_nil
+      # noinspection RubyResolve
       expect(result).to eq [{id: credentials.producer.id, description: credentials.producer.data.authoritative_name}]
     end
 
@@ -215,6 +225,7 @@ describe 'Rosetta Producer Service' do
     let(:contact_id) {credentials.contact.user_id}
     let(:contact_info) {credentials.contact.data.to_hash}
     let(:new_contact) {
+      # noinspection RubyArgCount
       ::Libis::Services::Rosetta::User.new(
           first_name: 'New',
           last_name: 'Contact',

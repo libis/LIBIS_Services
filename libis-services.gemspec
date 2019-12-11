@@ -33,7 +33,7 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency 'savon', '~> 2.11'
   spec.add_runtime_dependency 'rest-client', '~> 2.0'
   spec.add_runtime_dependency 'oai', '~> 0.4'
-  spec.add_runtime_dependency 'ruby-oci8', '~> 2.2.2'
+  spec.add_runtime_dependency 'ruby-oci8', '~> 2.2.2' unless RUBY_PLATFORM == 'java'
   spec.add_runtime_dependency 'virtus', '~> 1.0'
   spec.add_runtime_dependency 'write_xlsx', '~> 0.83'
   spec.add_runtime_dependency 'awesome_print', '~> 1.6'

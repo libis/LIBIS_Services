@@ -1,4 +1,12 @@
-require 'oci8'
+# frozen_string_literal: true
+if RUBY_PLATFORM == 'java'
+  require 'java'
+  require 'ojdbc8.jar'
+  require 'orai18n.jar'
+  java_import 'oracle.jdbc.pool.OracleDataSource'
+else
+  require 'oci8'
+end
 
 module Libis
   module Services
@@ -9,12 +17,27 @@ module Libis
 
       def initialize(url)
         @url = url
-        @oci = OCI8.new(url)
+        @oci = if RUBY_PLATFORM == 'java'
+          raise RuntimeError, 'Malformed database URL' unless url =~ /^(.*)\/(.*)@(.*)$/
+          user, pass, db = $1, $2, $3
+          uri = "jdbc:oracle:thin:@#{db}"
+          ods = OracleDataSource.new
+          ods.set_url(uri)
+          ods.set_user(user)
+          ods.set_password(pass)
+          ods.get_connection
+        else
+          OCI8.new(url)
+        end
         ObjectSpace.define_finalizer(self, self.class.finalize(@oci))
       end
 
       def self.finalize(oci)
-        proc { oci.logoff }
+        if RUBY_PLATFORM == 'java'
+          proc { oci.close }
+        else
+          proc { oci.logoff }
+        end
       end
 
       # @param [Boolean] value
@@ -60,7 +83,7 @@ module Libis
 
       def run(script, parameters = [])
         params = ''
-        params = "\"" + parameters.join("\" \"") + "\"" if parameters and parameters.size > 0
+        params = "\"" + parameters.join("\" \"") + "\"" if parameters&.size.to_i > 0
         process_result `sqlplus -S #{url} @#{script} #{params}`
       end
 

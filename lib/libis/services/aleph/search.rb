@@ -1,5 +1,6 @@
 # coding: utf-8
 
+require 'libis/tools/extend/hash'
 require 'libis/tools/xml_document'
 
 require 'libis/services/generic_search'

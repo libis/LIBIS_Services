@@ -10,6 +10,8 @@ require 'libis/tools/mets_file'
 
 require 'csv'
 require 'write_xlsx'
+require 'libis/tools/extend/hash'
+require 'libis/tools/extend/string'
 require 'awesome_print'
 
 require_relative '../service_error'

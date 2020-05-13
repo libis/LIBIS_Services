@@ -10,7 +10,6 @@ require 'libis/tools/mets_file'
 
 require 'csv'
 require 'write_xlsx'
-require 'backports'
 require 'awesome_print'
 
 require_relative '../service_error'

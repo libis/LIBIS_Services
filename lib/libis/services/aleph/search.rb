@@ -1,6 +1,5 @@
 # coding: utf-8
 
-require 'backports/rails/hash'
 require 'libis/tools/xml_document'
 
 require 'libis/services/generic_search'

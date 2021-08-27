@@ -18,7 +18,7 @@ describe 'Scope search service' do
     it 'by repcode' do
       data = {
           'dc:title' => 'Archief Sint-Vincentius a Paulogenootschap, Conferentie Onze-Lieve-Vrouw van de Rozenkrans Antwerpen',
-          'dc:identifier' => ['BE/942855/580 (ref.code)'],
+          'dc:identifier' => ['BE/942855/580'],
           'dc:source' => ['BE/942855']
       }
       result = subject.query 'BE-942855-580', type: 'REPCODE'
@@ -29,7 +29,7 @@ describe 'Scope search service' do
     it 'by id' do
       data = {
           'dc:title' => 'Archief Constant Guillaume Van Crombrugghe',
-          'dc:identifier' => ['BE/942855/1569 (ref.code)'],
+          'dc:identifier' => ['BE/942855/1569'],
           'dc:source' => ['BE/942855/1569']
       }
       result = subject.query '332785', type: 'ID'

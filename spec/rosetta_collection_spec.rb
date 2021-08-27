@@ -4,7 +4,6 @@ require_relative 'spec_helper'
 require 'libis/tools/config_file'
 require 'libis/tools/extend/hash'
 
-require 'libis/services/rosetta/pds_handler'
 require 'libis/services/rosetta/collection_handler'
 
 require 'rspec/matchers'
@@ -39,11 +38,6 @@ end
 describe 'Rosetta Collection Service' do
 
   let(:credentials) { Libis::Tools::ConfigFile.new File.join(File.dirname(__FILE__), 'credentials-test.yml') }
-  let(:pds_handler) do
-    # noinspection RubyResolve
-    Libis::Services::Rosetta::PdsHandler.new(credentials.pds_url)
-  end
-
   let(:handle) do
     # noinspection RubyResolve
     pds_handler.login(
@@ -63,7 +57,6 @@ describe 'Rosetta Collection Service' do
     collection_service = Libis::Services::Rosetta::CollectionHandler.new credentials.rosetta_url,
                                                                          log: credentials.debug,
                                                                          log_level: credentials.debug_level
-    # collection_service.pds_handle = handle
     collection_service
   end
 
@@ -195,13 +188,6 @@ describe 'Rosetta Collection Service' do
   end
 
   context 'check errors' do
-
-    it 'not authorized' do
-      collection_service.pds_handle = 'foobar'
-      expect do
-        collection_service.create({name: 'foo'})
-      end.to raise_error(Libis::Services::SoapError, /user_authorize_exception.*Invalid PDS Handle Number:foobar/)
-    end
 
     it 'invalid collection info' do
       expect do

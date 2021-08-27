@@ -17,6 +17,7 @@ RSpec::Matchers.define :deep_include do
   match {|actual| deep_include?(actual, expected)}
 
   def deep_include?(actual, expected, path = [])
+
     return true if actual == expected
 
     @failing_actual = actual
@@ -25,45 +26,71 @@ RSpec::Matchers.define :deep_include do
 
     case expected
       when Array
-        return false unless actual.is_a? Array
+        unless actual.is_a? Array
+          @failure ||= :not_an_array
+          return false 
+        end
         expected.each_with_index do |expected_item, index|
           match_found = actual.any? do |actual_item|
             deep_include? actual_item, expected_item, path + [index]
           end
           unless match_found
-            @failing_array = actual
-            @failing_array_path = path + [index]
-            @failing_expected_array_item = expected_item
+            @failure ||= :item_not_found
+            @failing_array_item = expected_item
             return false
           end
         end
       when Hash
-        return false unless actual.is_a? Hash
+        unless actual.is_a? Hash
+          @failure ||= :not_a_hash
+          return false
+        end
         expected.all? do |key, expected_value|
-          return false unless actual.has_key? key
-          deep_include? actual[key], expected_value, path + [key]
+          unless actual.has_key? key
+            @failure ||= :key_not_found
+            @failing_key = key
+            return false
+          end
+          v = deep_include? actual[key], expected_value, path + [key]
+          v
         end
       else
+        @failure ||= :no_match
         false
     end
+
   end
 
   failure_message do |_actual|
-    if @failing_array_path
-      path = @failing_array_path.map {|p| "[#{p.inspect}]"}.join
-      path = "root" if path.blank?
-      message = "Actual array did not include value at #{path}: \n" +
-          "  expected #{@failing_expected_array_item.inspect}\n" +
-          "  but matching value not found in array: #{@failing_array}\n"
+    path = @failing_path.map {|p| "[#{p.inspect}]"}.join
+    path = "root" if path.blank?
+    case @failure
+    when :no_match
+      "Actual value did not match expected value at #{path}: \n" +
+      "  expected #{@failing_expected.inspect}\n" +
+      "  got #{@failing_actual.inspect}\n"
+    when :not_an_array
+      "Actual object is not an Array at #{path}: \n" +
+      "  expected: #{@failing_expected.inspect}\n" +
+      "  got: #{@failing_actual}"
+    when :not_a_hash
+      "Actual object is not a Hash at #{path}: \n" +
+      "  expected: #{@failing_expected.inspect}\n" +
+      "  got: #{@failing_actual}"
+    when :item_not_found
+      "Actual array did not include value at #{path}: \n" +
+      "  expected #{@failing_array_item.inspect}\n" +
+      "  but matching value not found in array: #{@failing_actual.inspect}\n"
+    when :key_not_found
+      "Actual hash did not include expected key at #{path}: \n" +
+      "  key #{@failing_key}\n" +
+      "  expected #{@failing_expected.inspect}\n" +
+      "  got #{@failing_actual.inspect}\n"
     else
-      path = @failing_path.map {|p| "[#{p.inspect}]"}.join
-      path = "root" if path.blank?
-      message = "Actual hash did not include expected value at #{path}: \n" +
-          "  expected #{@failing_expected.inspect}\n" +
-          "  got #{@failing_actual.inspect}\n"
+      "Mismatch at #{path}: \n" +
+      "  expected #{@failing_expected.inspect}\n" +
+      "  got #{@failing_actual.inspect}\n"
     end
-
-    message
   end
 end
 

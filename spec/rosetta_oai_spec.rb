@@ -2,6 +2,7 @@
 require_relative 'spec_helper'
 
 require 'libis/tools/config_file'
+require 'libis/tools/extend/symbol'
 require 'libis/services/rosetta/oai_pmh'
 
 describe 'Rosetta OAI-PMH Service' do
@@ -13,42 +14,80 @@ describe 'Rosetta OAI-PMH Service' do
     Libis::Services::Rosetta::OaiPmh.new credentials.rosetta_url
   end
 
+  let(:expected_identify) {
+    {
+      repository_name: 'LIBIS Teneo Sandbox Repository',
+      base_url: "#{credentials.rosetta_url}/oaiprovider/request"
+    }
+  }
+
+  let(:expected_metadata_formats) {
+    [ 'oai_dc' ]
+  }
+
   let(:expected_sets) {
     [
-        {name:'TESTINS-collections', spec: 'TESTINS-collections'}
+      'TESTINS-collections',
+      'INS00-collections'
     ]
   }
 
   let(:expected_collections) {
     [
-        'Kerk & Leven',
-        'Kerk en leven. Bisdom Antwerpen (0991).',
+        'E-periodieken',
+        'Parochiebladen',
+        'Kerk en leven. Puurs (4635)',
     ]
+  }
+
+  let(:expected_identifiers) {
+    [ 'oai:sandbox.teneo.libis.be:IE403595']
   }
 
   let(:expected_records) {
     [
         {
-            id: 'oai:d4I1-pubam:IE405650',
+          header: {identifier: 'oai:sandbox.teneo.libis.be:IE403595'},
+          metadata: {
+            'metadata' => {
+              'oai_dc:dc' => {
+                'dc:title' => 'Denemarken 2015',
+                'dcterms:spatial' => ['Denemarken', 'Fyn', 'Sinebjerg']
+              }
+            }
+          }
         }
     ]
   }
 
+  it 'should identify' do
+    id = oai_handler.identify
+    expect(id).to deep_include(expected_identify)
+  end
+
+  it 'should get metata formats' do
+    formats = oai_handler.metadata_formats
+    expect(formats[:entries].map(&:dig.(:prefix)).compact).to deep_include(expected_metadata_formats)
+  end
+
   it 'should get set list' do
     sets = oai_handler.sets
-    expect(sets[:entries]).to deep_include(expected_sets)
+    expect(sets[:entries].map(&:dig.(:name)).compact).to deep_include(expected_sets)
   end
 
   it 'should get list of collections' do
-    status = {}
-    collections = oai_handler.collections('TESTINS', status)
-    expect(collections).to deep_include(expected_collections)
+    collections = oai_handler.collections('KADOC')
+    expect(collections[:entries].map(&:dig.(:metadata, 'metadata', 'oai_dc:dc', 'dc:title')).compact).to deep_include(expected_collections)
+  end
+
+  it 'should get list of identifiers' do
+    ids = oai_handler.identifiers(set: 'test_data', from: '2020-01-01')
+    expect(ids[:entries].map(&:dig.(:identifier)).compact).to deep_include(expected_identifiers)
   end
 
   it 'should get list of records' do
-    status = {}
-    records = oai_handler.records('test_data', status)
-    expect(records).to deep_include(expected_records)
+    records = oai_handler.records(set: 'test_data', from: '2020-01-01')
+    expect(records[:entries]).to deep_include(expected_records)
   end
 
 end

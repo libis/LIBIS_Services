@@ -22,7 +22,7 @@ describe 'Rosetta Services' do
     expect {handler.producer(producer_id)}.to raise_error(Libis::Services::ServiceError)
   end
 
-  let!(:credentials) {Libis::Tools::ConfigFile.new File.join(File.dirname(__FILE__), 'credentials-test.yml')}
+  let!(:credentials) {Libis::Tools::ConfigFile.new File.join(File.dirname(__FILE__), 'credentials-prod.yml')}
 
   # noinspection RubyResolve
   let(:admin) {credentials.admin}
@@ -34,6 +34,7 @@ describe 'Rosetta Services' do
   let(:admin_pwd) {admin.password}
   # noinspection RubyResolve
   let(:admin_ins) {admin.institute}
+  let(:admin_pds_ins) {admin.institute_pds}
 
   let(:bad_cred) { 'deadbeaf' }
 
@@ -99,7 +100,7 @@ describe 'Rosetta Services' do
     end
 
     describe 'with correct credentials' do
-      let(:handle) {pds_handler.login(admin_usr, admin_pwd, admin_ins)}
+      let(:handle) {pds_handler.login(admin_usr, admin_pwd, admin_pds_ins)}
 
       it 'should login and return a handle' do
         expect(handle).to_not be_nil
@@ -109,7 +110,7 @@ describe 'Rosetta Services' do
         bor_info = pds_handler.user_info handle
         expect(bor_info[:bor_info][:id]).to eq admin_usr
         expect(bor_info[:bor_info][:name]).to eq admin_usr
-        expect(bor_info[:bor_info][:institute]).to eq admin_ins
+        expect(bor_info[:bor_info][:institute]).to eq admin_pds_ins
 
       end
 
@@ -125,7 +126,7 @@ describe 'Rosetta Services' do
     end
 
     describe 'with wrong user name' do
-      let(:handle) {pds_handler.login(bad_cred, admin_pwd, admin_ins)}
+      let(:handle) {pds_handler.login(bad_cred, admin_pwd, admin_pds_ins)}
 
       it 'should not login' do
         expect(handle).to be_nil

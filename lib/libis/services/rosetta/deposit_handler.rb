@@ -9,7 +9,7 @@ module Libis
 
       class DepositHandler < ::Libis::Services::Rosetta::Client
 
-        def initialize(base_url = 'http://depot.lias.be', options = {})
+        def initialize(base_url = 'https://repository.teneo.libis.be', options = {})
           super 'deposit', 'DepositWebServices', {url: base_url}.merge(options)
         end
 

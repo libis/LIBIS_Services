@@ -12,7 +12,7 @@ module Libis
       class CollectionHandler < Libis::Services::Rosetta::Client
 
 
-        def initialize(base_url = 'http://depot.lias.be', options = {})
+        def initialize(base_url = 'https://repository.teneo.libis.be', options = {})
           super 'repository', 'CollectionWebServices', {url: base_url}.merge(options)
         end
 

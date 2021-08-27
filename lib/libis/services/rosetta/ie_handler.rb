@@ -10,7 +10,7 @@ module Libis
 
       class IeHandler < Libis::Services::Rosetta::Client
 
-        def initialize(base_url = 'http://depot.lias.be', options = {})
+        def initialize(base_url = 'https://repository.teneo.libis.be', options = {})
           super 'repository', 'IEWebServices', {url: base_url}.merge(options)
         end
 

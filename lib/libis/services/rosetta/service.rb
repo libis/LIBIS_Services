@@ -26,7 +26,7 @@ module Libis
         attr_reader :pds_service, :producer_service, :deposit_service, :sip_service, :ie_service, :collection_service
 
         # @param [String] base_url
-        def initialize(base_url = 'http://depot.lias.be', pds_url = 'https://pds.libis.be', opts = {})
+        def initialize(base_url = 'https://repository.teneo.libis.be', pds_url = 'https://pds.libis.be', opts = {})
           @pds_service = Libis::Services::Rosetta::PdsHandler.new pds_url
           @producer_service = Libis::Services::Rosetta::ProducerHandler.new base_url, opts
           @deposit_service = Libis::Services::Rosetta::DepositHandler.new base_url, opts

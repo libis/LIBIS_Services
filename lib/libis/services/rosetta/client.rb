@@ -28,7 +28,7 @@ module Libis
             ]
           end
           opts = {strip_namespaces: true, logger: ::Libis::Tools::Config.logger}.merge options
-          base_url = opts.delete(:url) || 'http://depot.lias.be'
+          base_url = opts.delete(:url) || 'https://repository.teneo.libis.be'
           configure "#{base_url}/dpsws/#{section}/#{service}?wsdl", opts
         end
 

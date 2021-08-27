@@ -1,5 +1,6 @@
 require 'oai'
 require 'libis/tools/extend/hash'
+require 'libis/tools/xml_document'
 require 'libis/services/service_error'
 
 module Libis
@@ -8,15 +9,24 @@ module Libis
       include OAI::XPath
 
       class Query
-        attr_accessor :from, :until, :set, :metadata_prefix
 
-        def intialize(metadata_prefix = 'oai_dc')
-          @from = @until = @set = nil
-          @metadata_prefix = metadata_prefix
+        def initialize(options = {})
+          @options = options
+          @options[:metadata_prefix] ||= 'oai_dc'
+        end
+
+        def [](key, value)
+          @options[key] = value
         end
 
         def to_hash
-          { from: @from, until: @until, metadata_prefix: @metadata_prefix, set: @set }.cleanup
+          { 
+            from: @options[:from],
+            until: @options[:until],
+            metadata_prefix: @options[:metadata_prefix],
+            set: @options[:set],
+            resumption_token: @options[:token] || @options[:resumption_token]
+          }.cleanup
         end
 
       end
@@ -35,28 +45,41 @@ module Libis
         do_oai_request(:list_sets, options)
       end
 
-      def metdata_formats(identifier = nil)
+      def metadata_formats(identifier = nil)
         do_oai_request(:list_metadata_formats, {identifier: identifier})
       end
 
-      def identifiers(token = nil, query = Query.new)
-        options = token ? {resumption_token: token} : query.to_hash
-        do_oai_request(:list_identifiers, options)
+      def identifiers(token_or_query = nil)
+        do_oai_request(:list_identifiers, token_or_query_to_hash(token_or_query))
       end
 
-      def records(token = nil, query = Query.new)
-        options = token ? {resumption_token: token} : query.to_hash
-        do_oai_request(:list_records, options)
+      def records(token_or_query = nil)
+        do_oai_request(:list_records, token_or_query_to_hash(token_or_query))
       end
 
-      def record(identifier, metadata_prefix)
+      def record(identifier, metadata_prefix = 'oai_dc')
         do_oai_request(:get_record, identifier: identifier, metadata_prefix: metadata_prefix)
       end
 
-      private
+      protected
 
+      def token_or_query_to_hash(token_or_query)
+        case token_or_query
+        when Hash
+          Query.new(token_or_query).to_hash
+        when Query
+          token_or_query.to_hash
+        when String
+          { resumption_token: token_or_query }
+        else
+          {}
+        end
+      end
+
+      private
+      
       def do_oai_request(method, options = {})
-        response = @oai_client.send(method, options.cleanup)
+        response = options.cleanup.empty? ? @oai_client.send(method): @oai_client.send(method, options.cleanup)
         object_to_hash(response)
       rescue OAI::Exception => e
         raise Libis::Services::ServiceError, "OAI Error: #{e.code} - #{e.message}"
@@ -71,7 +94,7 @@ module Libis
               h[k] = object_to_hash(v)
             end
           when REXML::Element
-            obj.to_s
+            Libis::Tools::XmlDocument.parse(obj.to_s).to_hash
           when OAI::Response, OAI::Header, OAI::Record, OAI::MetadataFormat, OAI::Set
             result = obj.instance_variables.map do |x|
               x[1..-1].to_sym

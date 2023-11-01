@@ -64,8 +64,8 @@ module Libis
         oci.parse(statement)
       end
 
-      def cursor_exec(cursor, **binvars)
-        bindvars.each { |k, v| cursor.bind_param(k, v) }
+      def cursor_exec(cursor, **bindvars)
+        bindvars.each { |k, v| cursor.bind_param(k.to_sym, v) }
         cursor.exec
       end
 

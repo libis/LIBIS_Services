@@ -60,6 +60,15 @@ module Libis
         oci.exec(statement, *bindvars, &block)
       end
 
+      def parse(statement)
+        oci.parse(statement)
+      end
+
+      def cursor_exec(cursor, **binvars)
+        bindvars.each { |k, v| cursor.bind_param(k, v) }
+        cursor.exec
+      end
+
       def table(name)
         metadata = oci.describe_table(name)
         {

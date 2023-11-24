@@ -41,18 +41,17 @@ describe 'Rosetta OAI-PMH Service' do
   }
 
   let(:expected_identifiers) {
-    [ 'oai:sandbox.teneo.libis.be:IE403595']
+    [ 'oai:sandbox.teneo.libis.be:IE1000']
   }
 
   let(:expected_records) {
     [
         {
-          header: {identifier: 'oai:sandbox.teneo.libis.be:IE403595'},
+          header: {identifier: 'oai:sandbox.teneo.libis.be:IE1000'},
           metadata: {
             'metadata' => {
               'oai_dc:dc' => {
-                'dc:title' => 'Denemarken 2015',
-                'dcterms:spatial' => ['Denemarken', 'Fyn', 'Sinebjerg']
+                'dc:title' => 'Test'
               }
             }
           }

@@ -49,7 +49,7 @@ describe 'Alma' do
         data = Libis::Services::Alma::WebService.new.get_marc('9930800070101480', 'l7xx8879c82a7d7b453a887a6e6dca8300fd').
             to_hash(:convert_tags_to => lambda { |tag| tag.snakecase.to_sym })
         record = data[:bib][:record]
-        record.cleanup!
+        record.cleanup
       }
 
       it 'search' do

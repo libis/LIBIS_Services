@@ -12,7 +12,7 @@ Gem::Specification.new do |spec|
   spec.email         = ['kris.dekeyser@libis.be']
   spec.summary       = %q{LIBIS Services toolbox.}
   spec.description   = %q{Set of classes that simplify connection to different LIBIS services.}
-  spec.homepage      = 'https://github.com/Kris-LIBIS/LIBIS_Services'
+  spec.homepage      = 'https://github.com/libis/LIBIS_Services'
   spec.license       = 'MIT'
 
   spec.platform      = Gem::Platform::JAVA if defined?(RUBY_ENGINE) && RUBY_ENGINE == 'jruby'

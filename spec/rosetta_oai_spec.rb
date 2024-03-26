@@ -66,22 +66,22 @@ describe 'Rosetta OAI-PMH Service' do
 
   it 'should get metata formats' do
     formats = oai_handler.metadata_formats
-    expect(formats[:entries].map(&:dig.(:prefix)).compact).to deep_include(expected_metadata_formats)
+    expect(formats[:entries].map(&:dig.with(:prefix)).compact).to deep_include(expected_metadata_formats)
   end
 
   it 'should get set list' do
     sets = oai_handler.sets
-    expect(sets[:entries].map(&:dig.(:name)).compact).to deep_include(expected_sets)
+    expect(sets[:entries].map(&:dig.with(:name)).compact).to deep_include(expected_sets)
   end
 
   it 'should get list of collections' do
     collections = oai_handler.collections('KADOC')
-    expect(collections[:entries].map(&:dig.(:metadata, 'metadata', 'oai_dc:dc', 'dc:title')).compact).to deep_include(expected_collections)
+    expect(collections[:entries].map(&:dig.with(:metadata, 'metadata', 'oai_dc:dc', 'dc:title')).compact).to deep_include(expected_collections)
   end
 
   it 'should get list of identifiers' do
     ids = oai_handler.identifiers(set: 'test_data', from: '2020-01-01')
-    expect(ids[:entries].map(&:dig.(:identifier)).compact).to deep_include(expected_identifiers)
+    expect(ids[:entries].map(&:dig.with(:identifier)).compact).to deep_include(expected_identifiers)
   end
 
   it 'should get list of records' do
